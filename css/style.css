@@ -10,11 +10,11 @@
   --mb-primary-dark: #3a8f97;
   --mb-secondary:    #AEDCE1;
   --mb-yellow:       #fef3c0;
-  --mb-yellow-dark:  #fde68a;
+  --mb-yellow-dark:  #efc152;
   --mb-white:        #ffffff;
   --mb-light:        #f8fdfe;
   --mb-light2:       #edf9fa;
-  --mb-dark:         #2c3e50;
+  --mb-dark:         #215469;
   --mb-text:         #4a5568;
   --mb-muted:        #718096;
   --mb-border:       rgba(76, 170, 179, 0.25);
@@ -475,7 +475,7 @@ p {
   transform: translateX(-50%) translateY(-50%);
   display: block;
   width: 100px; height: 100px;
-  background: var(--mb-primary);
+  background: var(--mb-yellow-dark);
   border-radius: 50%;
   transition: all 200ms;
 }
