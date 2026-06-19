@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="maternidade, gestação, gravidez, app gestante, acompanhamento gestacional">
+    <meta name="description" content="MamaBloom — Aplicativo de suporte para gestantes e puérperas. Cuidando de você em cada florescer da maternidade.">
+    <title>MamaBloom — Cuidando de você em cada florescer da maternidade</title>
+
+    <!-- Preconnect fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Bibliotecas -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Bootstrap customizado -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS principal -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ── Spinner ─────────────────────────────────────────── -->
+    <div id="spinner"
+         class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
+         role="status"
+         aria-label="Carregando">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="visually-hidden">Carregando…</span>
+        </div>
+    </div>
+
+    <!-- ── Navbar ──────────────────────────────────────────── -->
+    <header class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
+        <div class="container px-0">
+            <nav class="navbar navbar-light navbar-expand-xl py-3" aria-label="Navegação principal">
+
+                <a href="#home" class="navbar-brand" aria-label="MamaBloom — página inicial">
+                    <h1 class="text-primary display-6 mb-0">Mama<span>Bloom</span></h1>
+                </a>
+
+                <button class="navbar-toggler py-2 px-3"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarCollapse"
+                        aria-controls="navbarCollapse"
+                        aria-expanded="false"
+                        aria-label="Abrir menu">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto gap-1">
+                        <a href="#home"     class="nav-item nav-link active" aria-current="page">Home</a>
+                        <a href="#sobre"    class="nav-item nav-link">Sobre</a>
+                        <a href="#servicos" class="nav-item nav-link">Serviços</a>
+                        <a href="#equipe"   class="nav-item nav-link">Equipe</a>
+                    </div>
+
+                    <button class="btn-search btn btn-primary btn-md-square rounded-circle"
+                            data-bs-toggle="modal"
+                            data-bs-target="#searchModal"
+                            aria-label="Abrir busca">
+                        <i class="fas fa-search text-dark" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ── Modal Busca ─────────────────────────────────────── -->
+    <div class="modal fade" id="searchModal" tabindex="-1"
+         aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content rounded-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="searchModalLabel">Buscar por palavra-chave</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="input-group w-75 mx-auto">
+                        <label for="searchInput" class="visually-hidden">Busca</label>
+                        <input id="searchInput" type="search"
+                               class="form-control p-3"
+                               placeholder="Digite palavras-chave…"
+                               aria-label="Campo de busca">
+                        <span class="input-group-text p-3">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         HERO — HOME
+    ═══════════════════════════════════════════════════════ -->
+    <section id="home" aria-label="Página inicial">
+        <div class="container-fluid py-5 hero-header wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-8 col-md-10 col-12">
+                        <p class="mb-2 text-primary fw-bold" style="font-family:'Fredoka',sans-serif;font-size:1.4rem;letter-spacing:1px;">
+                             MamaBloom
+                        </p>
+                        <h1 class="mb-4 display-1 text-white">
+                            Cuidando de você em cada florescer da maternidade.
+                        </h1>
+                        <p class="text-white mb-5" style="font-size:1.05rem;opacity:.88;max-width:520px;line-height:1.75;">
+                            Um guia digital completo para acompanhar sua gestação com carinho, segurança e informação de qualidade.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#sobre"    class="btn btn-primary px-5 py-3 btn-border-radius">Conhecer</a>
+                            <a href="#servicos" class="btn btn-primary px-5 py-3 btn-border-radius">Nossos Serviços</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SOBRE
+    ═══════════════════════════════════════════════════════ -->
+    <section id="sobre" aria-label="Sobre o MamaBloom">
+        <div class="container-fluid py-5 about bg-light">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+
+                    <!-- Imagem / vídeo -->
+                    <div class="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="video border">
+                            <button type="button"
+                                    class="btn btn-play"
+                                    data-bs-toggle="modal"
+                                    data-src="https://www.youtube.com/embed/DWRcNpR6Kdc"
+                                    data-bs-target="#videoModal"
+                                    aria-label="Assistir vídeo sobre o MamaBloom">
+                                <span aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Texto -->
+                    <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                            Sobre Nós
+                        </h4>
+                        <h2 class="text-dark mb-4 display-5">Conheça mais sobre o MamaBloom</h2>
+                        <p class="textojustificado-b text-dark mb-4">
+                            O projeto MamaBloom é um aplicativo desenvolvido com foco no auxílio de mulheres gestantes, com a finalidade de oferecer suporte durante toda a gravidez e no período pós-parto. Por meio de suas ferramentas, o aplicativo permite o acompanhamento contínuo da gestação, o acesso a informações confiáveis e personalizadas, o registro de dados e experiências ao longo desse período, a organização de consultas, exames e demais compromissos, além de oferecer apoio emocional — contribuindo para que as futuras mães se sintam mais seguras, informadas e preparadas diante das mudanças e desafios da maternidade.
+                        </p>
+
+                        <div class="row mb-4 g-2">
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Acompanhamento Gestacional</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Informações Confiáveis</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Organização de Consultas</h6>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="mb-3"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Diário Gestacional</h6>
+                                <h6 class="mb-3"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Apoio Emocional</h6>
+                                <h6 class="mb-0"><i class="fas fa-check-circle text-primary me-2" aria-hidden="true"></i>Relatórios Mensais</h6>
+                            </div>
+                        </div>
+
+                        <a href="#servicos" class="btn btn-primary px-5 py-3 btn-border-radius">Ver Serviços</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Vídeo -->
+    <div class="modal fade" id="videoModal" tabindex="-1"
+         aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="videoModalLabel">MamaBloom em Vídeo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="ratio ratio-16x9">
+                        <iframe id="video"
+                                src=""
+                                title="Vídeo MamaBloom"
+                                allowfullscreen
+                                allow="autoplay; encrypted-media"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SERVIÇOS
+    ═══════════════════════════════════════════════════════ -->
+    <section id="servicos" aria-label="Serviços do MamaBloom">
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+
+                <!-- Cabeçalho -->
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width:680px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                        O que Fazemos
+                    </h4>
+                    <h2 class="mb-5 display-5">Principais Ferramentas do Nosso App</h2>
+                </div>
+
+                <!-- Cards -->
+                <div class="row g-4">
+
+                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="text-center service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-3">
+                                        <i class="fas fa-notes-medical fa-4x text-primary" aria-hidden="true"></i>
+                                    </div>
+                                    <a href="#" class="h4 d-block mb-0">Saúde da Mamãe</a>
+                                    <p class="my-3">Formulário semanal que acompanha os hábitos, comportamentos e as condições de saúde da gestante ao longo de toda a gravidez.</p>
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 my-1 btn-border-radius">Ver Mais</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.25s">
+                        <div class="text-center service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-3">
+                                        <i class="fas fa-chart-line fa-4x text-primary" aria-hidden="true"></i>
+                                    </div>
+                                    <a href="#" class="h4 d-block mb-0">Relatório Mensal</a>
+                                    <p class="my-3">Com base nos dados coletados semanalmente, é gerado ao final de cada mês um relatório organizado com a evolução da saúde da gestante e possíveis alertas.</p>
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 my-1 btn-border-radius">Ver Mais</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.4s">
+                        <div class="text-center service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-3">
+                                        <i class="fas fa-book-open fa-4x text-primary" aria-hidden="true"></i>
+                                    </div>
+                                    <a href="#" class="h4 d-block mb-0">Diário Gestacional</a>
+                                    <p class="my-3">Espaço interativo para registrar experiências, emoções e momentos vividos durante a gravidez, com suporte a fotos e memórias afetivas.</p>
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 my-1 btn-border-radius">Ver Mais</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3 wow fadeIn" data-wow-delay="0.55s">
+                        <div class="text-center service-item">
+                            <div class="service-content d-flex align-items-center justify-content-center p-4">
+                                <div class="service-content-inner">
+                                    <div class="p-3">
+                                        <i class="fas fa-user-nurse fa-4x text-primary" aria-hidden="true"></i>
+                                    </div>
+                                    <a href="#" class="h4 d-block mb-0">Aba de Apoio</a>
+                                    <p class="my-3">Conteúdos confiáveis (artigos e vídeos) personalizados conforme a fase da gravidez, além de um espaço de interação entre gestantes para troca de experiências.</p>
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 my-1 btn-border-radius">Ver Mais</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EQUIPE — 10 membros: 5 + 5
+    ═══════════════════════════════════════════════════════ -->
+    <section id="equipe" aria-label="Nossa equipe">
+        <div class="container-fluid team py-5">
+            <div class="container py-5">
+
+                <!-- Cabeçalho -->
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width:600px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                        Nossa Equipe
+                    </h4>
+                    <h2 class="mb-2 display-5">Conheça Nossa Equipe</h2>
+                    <p class="text-muted mb-5">As pessoas dedicadas que tornaram o MamaBloom possível.</p>
+                </div>
+
+                <!-- Grade 5 + 5 -->
+                <div class="team-grid wow fadeIn" data-wow-delay="0.2s">
+
+                    <!-- Membro 1 -->
+                    <article class="team-card" aria-label="Membro: Brenda Laís">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Amanda Maria</h5>
+                        <p class="team-role">Designer UX/UI</p>
+                    </article>
+
+                    <!-- Membro 2 -->
+                    <article class="team-card" aria-label="Membro: Ana Beatriz">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Angelo Gabriel</h5>
+                        <p class="team-role">Dev Front-end</p>
+                    </article>
+
+                    <!-- Membro 3 -->
+                    <article class="team-card" aria-label="Membro: Carla Mendes">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Anna Graciela</h5>
+                        <p class="team-role">Dev Back-end</p>
+                    </article>
+
+                    <!-- Membro 4 -->
+                    <article class="team-card" aria-label="Membro: Fernanda Lima">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Brenda Laís</h5>
+                        <p class="team-role">Gerente de Projeto</p>
+                    </article>
+
+                    <!-- Membro 5 -->
+                    <article class="team-card" aria-label="Membro: Juliana Costa">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Daniela Sandy</h5>
+                        <p class="team-role">Analista de Dados</p>
+                    </article>
+
+                    <!-- Membro 6 -->
+                    <article class="team-card" aria-label="Membro: Larissa Souza">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Gabriel da Silva</h5>
+                        <p class="team-role">Dev Mobile</p>
+                    </article>
+
+                    <!-- Membro 7 -->
+                    <article class="team-card" aria-label="Membro: Marina Alves">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Hadassa Gabrielly</h5>
+                        <p class="team-role">Redatora de Conteúdo</p>
+                    </article>
+
+                    <!-- Membro 8 -->
+                    <article class="team-card" aria-label="Membro: Patrícia Rocha">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Jésley Rakely</h5>
+                        <p class="team-role">QA &amp; Testes</p>
+                    </article>
+
+                    <!-- Membro 9 -->
+                    <article class="team-card" aria-label="Membro: Rafaela Dias">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Luana Layla</h5>
+                        <p class="team-role">Banco de Dados</p>
+                    </article>
+
+                    <!-- Membro 10 -->
+                    <article class="team-card" aria-label="Membro: Vitória Nunes">
+                        <div class="team-avatar" aria-hidden="true">
+                            <span class="team-avatar-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <h5 class="team-name">Talita Priscila</h5>
+                        <p class="team-role">Scrum Master</p>
+                    </article>
+
+                </div><!-- /team-grid -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════════════════ -->
+    <footer class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+
+                <!-- Sobre e newsletter -->
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h2 class="fw-bold mb-3">
+                            <span class="text-primary">Mama</span><span class="text-secondary">Bloom</span>
+                        </h2>
+                        <p class="mb-4">A MamaBloom está aqui para oferecer apoio, informação e acolhimento durante toda a sua jornada na gestação. Se você tiver dúvidas, sugestões ou precisar de ajuda, entre em contato conosco. 💛</p>
+                        <div class="border border-primary p-3 rounded-3 bg-light">
+                            <h5 class="mb-3">escreva aqui</h5>
+                            <div class="position-relative mx-auto border border-primary rounded-3" style="max-width:400px;">
+                                <label for="newsletterEmail" class="visually-hidden">Seu e-mail</label>
+                                <input id="newsletterEmail"
+                                       class="form-control border-0 w-100 py-3 ps-4 pe-5"
+                                       type="email"
+                                       placeholder="Seu e-mail">
+                                <button type="button"
+                                        class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">
+                                    Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links rápidos -->
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                            Links Rápidos
+                        </h4>
+                        <nav aria-label="Links do rodapé">
+                            <a href="#home"     class="text-body mb-3 d-block"><i class="fa fa-angle-right text-primary me-2" aria-hidden="true"></i>Home</a>
+                            <a href="#sobre"    class="text-body mb-3 d-block"><i class="fa fa-angle-right text-primary me-2" aria-hidden="true"></i>Sobre Nós</a>
+                            <a href="#servicos" class="text-body mb-3 d-block"><i class="fa fa-angle-right text-primary me-2" aria-hidden="true"></i>Serviços</a>
+                            <a href="#equipe"   class="text-body mb-3 d-block"><i class="fa fa-angle-right text-primary me-2" aria-hidden="true"></i>Equipe</a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Contato -->
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                            Contato
+                        </h4>
+                        <address style="font-style:normal;">
+                            <a href="tel:+5564924578612" class="text-body mb-4 d-block">
+                                <i class="fa fa-phone-alt text-primary me-2" aria-hidden="true"></i>(64) 92457-8612
+                            </a>
+                            <a href="mailto:contato@mamabloom.com.br" class="text-body mb-4 d-block">
+                                <i class="fas fa-envelope text-primary me-2" aria-hidden="true"></i>contato@mamabloom.com.br
+                            </a>
+                            <span class="text-body mb-4 d-block">
+                                <i class="fa fa-clock text-primary me-2" aria-hidden="true"></i>Atendimento 24/6
+                            </span>
+                        </address>
+                        <div class="footer-icon d-flex gap-2">
+                            <a class="btn btn-primary btn-sm-square rounded-circle" href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                            <a class="btn btn-primary btn-sm-square rounded-circle" href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                            <a class="btn btn-primary btn-sm-square rounded-circle" href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                            <a class="btn btn-primary btn-sm-square rounded-circle" href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Galeria -->
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">
+                            Galeria
+                        </h4>
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-1.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 1" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-2.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 2" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-3.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 3" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-4.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 4" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-5.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 5" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary overflow-hidden">
+                                    <img src="img/galary-6.jpg" class="img-fluid rounded-circle p-2" alt="Galeria MamaBloom 6" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- Copyright -->
+    <div class="container-fluid copyright py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-light">
+                        <a href="#home" class="text-light text-decoration-none">
+                            <i class="fas fa-copyright me-2" aria-hidden="true"></i>MamaBloom
+                        </a>, Todos os direitos reservados.
+                    </span>
+                </div>
+                <div class="col-md-6 text-center text-md-end text-light">
+                    Desenvolvido com <i class="fas fa-heart text-primary mx-1" aria-hidden="true"></i> pela equipe MamaBloom
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voltar ao topo -->
+    <a href="#home" class="btn btn-primary border-3 border-primary rounded-circle back-to-top" aria-label="Voltar ao topo">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+
+    <!-- ── JavaScript ────────────────────────────────────────── -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Active nav on scroll -->
+    <script>
+    (function () {
+        'use strict';
+        var sections  = ['home', 'sobre', 'servicos', 'equipe'];
+        var navLinks  = {};
+        sections.forEach(function (id) {
+            navLinks[id] = document.querySelector('.navbar-nav a[href="#' + id + '"]');
+        });
+
+        function onScroll () {
+            var current = 'home';
+            sections.forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - 120) { current = id; }
+            });
+            sections.forEach(function (id) {
+                if (navLinks[id]) navLinks[id].classList.remove('active');
+            });
+            if (navLinks[current]) navLinks[current].classList.add('active');
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+    </script>
+
+</body>
+</html>
