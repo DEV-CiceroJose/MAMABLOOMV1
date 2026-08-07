@@ -1,113 +1,70 @@
 import { Link } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import { createDefaultAppointments, moods } from '../data/demoData.js'
+import IllustratedActionCard from '../components/prototype/IllustratedActionCard.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useAuth } from '../hooks/useAuth.js'
-import { useLocalData } from '../hooks/useLocalData.js'
-import { formatShortDate, toDateKey } from '../lib/date.js'
 
-const shortcuts = [
-  { to: '/agenda', icon: 'calendar', label: 'Agenda', detail: 'Consultas e lembretes', tone: 'yellow' },
-  { to: '/diario', icon: 'message', label: 'Diário', detail: 'Emoções e memórias', tone: 'blue' },
-  { to: '/saude', icon: 'activity', label: 'Saúde', detail: 'Check-in semanal', tone: 'mint' },
-  { to: '/emergencia', icon: 'shield', label: 'Emergência', detail: 'Dados essenciais', tone: 'rose' },
+const extraLinks = [
+  { to: '/saude', icon: 'activity', label: 'Saúde da mamãe' },
+  { to: '/emergencia', icon: 'shield', label: 'Cartão de emergência' },
+  { to: '/relatorios', icon: 'chart', label: 'Relatório gestacional' },
+  { to: '/apoio', icon: 'heart', label: 'Central de apoio' },
+  { to: '/loja', icon: 'bag', label: 'Loja MamaBloom' },
+  { to: '/planos', icon: 'sparkles', label: 'Planos MamaBloom+' },
 ]
 
 export default function HomePreviewPage() {
   const { user } = useAuth()
-  const [appointments] = useLocalData('mamabloom:appointments', createDefaultAppointments)
-  const [entries] = useLocalData('mamabloom:diary', [])
-  const [healthChecks] = useLocalData('mamabloom:health-checks', [])
   const weeks = user?.pregnancy?.weeks ?? 21
-  const progress = Math.min(100, Math.round((weeks / 40) * 100))
-  const today = toDateKey()
-  const nextAppointment = [...appointments]
-    .filter((item) => item.date >= today)
-    .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))[0]
-  const latestMood = moods.find((mood) => mood.id === entries[0]?.mood)
+  const month = Math.min(9, Math.max(1, Math.ceil(weeks / 4)))
+  const firstName = (user?.name || 'Alícia').trim().split(/\s+/)[0].toLocaleUpperCase('pt-BR')
+  const prototypeAsset = (name) => `${import.meta.env.BASE_URL}prototype/${name}`
 
   return (
-    <AppShell>
-      <section className="journey-card" aria-labelledby="greeting">
-        <div>
-          <p className="eyebrow eyebrow--light">Sua jornada</p>
-          <h1 id="greeting">Olá, {user?.name}!</h1>
-          <p>{weeks} semanas de gestação</p>
-        </div>
-        <img src={`${import.meta.env.BASE_URL}brand/bee-baby.webp`} alt="" />
-        <div className="journey-progress" aria-label={`${progress}% da gestação estimada`}>
-          <span style={{ width: `${progress}%` }} />
-        </div>
-      </section>
-
-      <section className="daily-summary" aria-labelledby="summary-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Hoje</p>
-            <h2 id="summary-title">Como está sua jornada?</h2>
-          </div>
-        </div>
-        <div className="summary-grid">
-          <Link to="/agenda" className="summary-card">
-            <span className="summary-card__icon"><Icon name="calendar" /></span>
+    <AppShell
+      className="home-prototype"
+      header={({ openMenu }) => (
+        <section className="home-prototype__hero" aria-labelledby="home-greeting">
+          <PrototypeToolbar className="home-prototype__toolbar" search onMenu={openMenu} />
+          <div className="home-prototype__journey">
             <div>
-              <small>Próximo compromisso</small>
-              <strong>{nextAppointment?.title || 'Nenhum agendado'}</strong>
-              <span>{nextAppointment ? `${formatShortDate(nextAppointment.date)} · ${nextAppointment.time}` : 'Organize sua agenda'}</span>
+              <h1 id="home-greeting">{firstName}</h1>
+              <p className="home-prototype__weeks"><strong>{weeks} Semanas</strong><span>{month}º mês de gestação</span></p>
             </div>
-          </Link>
-          <Link to="/diario" className="summary-card">
-            <span className="summary-card__mood">{latestMood?.emoji || '🌼'}</span>
-            <div>
-              <small>Último humor</small>
-              <strong>{latestMood?.label || 'Ainda não registrado'}</strong>
-              <span>{entries.length ? 'Confira seu diário' : 'Conte como você está'}</span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      <section aria-labelledby="shortcuts-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Acesse</p>
-            <h2 id="shortcuts-title">Cuidados e organização</h2>
+            <img src={prototypeAsset('home-pregnancy.webp')} alt="Ilustração do desenvolvimento do bebê" />
           </div>
-          <span>{healthChecks.length ? 'Check-in feito' : 'Check-in pendente'}</span>
+        </section>
+      )}
+    >
+      <section className="home-prototype__content" aria-labelledby="home-access-title">
+        <h2 id="home-access-title">Acesse:</h2>
+        <div className="home-prototype__actions">
+          <IllustratedActionCard image={prototypeAsset('home-agenda.webp')} label="Agenda" to="/agenda" />
+          <IllustratedActionCard image={prototypeAsset('home-diary.webp')} label="Diário" to="/diario" />
         </div>
-        <div className="shortcut-grid shortcut-grid--four">
-          {shortcuts.map((shortcut) => (
-            <Link className={`shortcut-card shortcut-card--${shortcut.tone}`} to={shortcut.to} key={shortcut.to}>
-              <Icon name={shortcut.icon} size={28} />
-              <strong>{shortcut.label}</strong>
-              <span>{shortcut.detail}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      <article className="reading-card">
-        <div>
-          <p className="eyebrow eyebrow--light">Leitura do dia</p>
-          <h2>Pequenos cuidados para uma gestação mais tranquila</h2>
-          <p>Informações gerais de bem-estar para conversar com sua equipe de pré-natal.</p>
-        </div>
-        <span className="reading-card__badge"><Icon name="heart" size={24} /></span>
-      </article>
+        <h2>Faça a leitura do dia!</h2>
+        <article className="home-prototype__reading">
+          <img src={prototypeAsset('home-reading.webp')} alt="Gestante preparando a bolsa da maternidade" />
+          <div>
+            <strong>Gravidez Saudável:</strong>
+            <span>orientações para uma boa gestação.</span>
+          </div>
+        </article>
 
-      <section aria-labelledby="journey-tools-title">
-        <div className="section-heading">
-          <div><p className="eyebrow">Acompanhe</p><h2 id="journey-tools-title">Sua jornada em perspectiva</h2></div>
-        </div>
-        <div className="journey-tools">
-          <Link to="/relatorios"><span><Icon name="chart" /></span><div><strong>Relatório gestacional</strong><small>Veja seus registros reunidos</small></div><Icon name="chevronRight" size={18} /></Link>
-          <Link to="/apoio"><span><Icon name="heart" /></span><div><strong>Central de apoio</strong><small>Respiração, acolhimento e sua rede</small></div><Icon name="chevronRight" size={18} /></Link>
-        </div>
-      </section>
-
-      <section className="commerce-preview" aria-labelledby="commerce-title">
-        <div><p className="eyebrow eyebrow--light">Universo MamaBloom</p><h2 id="commerce-title">Produtos e planos para florescer</h2><p>Conheça a vitrine e compare as experiências MamaBloom+.</p></div>
-        <div><Link to="/loja">Explorar loja <Icon name="chevronRight" size={17} /></Link><Link to="/planos">Ver planos</Link></div>
+        <section className="home-prototype__more" aria-labelledby="home-more-title">
+          <h2 id="home-more-title">Continue explorando</h2>
+          <div>
+            {extraLinks.map((item) => (
+              <Link to={item.to} key={item.to}>
+                <span><Icon name={item.icon} size={21} /></span>
+                <strong>{item.label}</strong>
+                <Icon name="chevronRight" size={17} />
+              </Link>
+            ))}
+          </div>
+        </section>
       </section>
     </AppShell>
   )

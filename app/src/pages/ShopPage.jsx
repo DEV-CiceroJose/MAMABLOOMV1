@@ -2,53 +2,77 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { formatCurrency, products } from '../data/storeData.js'
 import { useLocalData } from '../hooks/useLocalData.js'
 import { addCartItem } from '../lib/cart.js'
 
-const categories = ['Todos', ...new Set(products.map((product) => product.category))]
-
 export default function ShopPage() {
   const [cart, setCart] = useLocalData('mamabloom:cart', [])
-  const [category, setCategory] = useState('Todos')
+  const [favorites, setFavorites] = useLocalData('mamabloom:shop-favorites', [])
+  const [tab, setTab] = useState('Promo')
+  const [search, setSearch] = useState('')
   const [message, setMessage] = useState('')
-  const visibleProducts = category === 'Todos' ? products : products.filter((product) => product.category === category)
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
+  const normalizedSearch = search.trim().toLocaleLowerCase('pt-BR')
+  const visibleProducts = products.filter((product) => {
+    const matchesTab = tab === 'Promo' || favorites.includes(product.id)
+    const matchesSearch = !normalizedSearch || `${product.name} ${product.brand}`.toLocaleLowerCase('pt-BR').includes(normalizedSearch)
+    return matchesTab && matchesSearch
+  })
 
   function addProduct(product) {
     setCart((current) => addCartItem(current, product.id))
     setMessage(`${product.name} foi adicionado ao carrinho.`)
   }
 
+  function toggleFavorite(productId) {
+    setFavorites((current) => current.includes(productId) ? current.filter((id) => id !== productId) : [...current, productId])
+  }
+
   return (
-    <AppShell>
-      <PageTitle
-        eyebrow="Seleção MamaBloom"
-        title="Loja"
-        action={<Link className="round-action cart-action" to="/carrinho" aria-label={`Carrinho com ${cartCount} itens`}><Icon name="bag" />{cartCount > 0 && <span>{cartCount}</span>}</Link>}
-      />
+    <AppShell
+      className="shop-prototype"
+      navTone="yellow"
+      header={({ openMenu }) => (
+        <header className="shop-prototype__header">
+          <h1>Loja</h1>
+          <PrototypeToolbar onMenu={openMenu} />
+        </header>
+      )}
+    >
+      <section className="shop-prototype__promo" aria-label="Promoção da semana">
+        <img src={`${import.meta.env.BASE_URL}prototype/store-promo.webp`} alt="Enxoval de bebê em destaque" />
+        <div><strong>Faça o enxoval do<br />seu bebê aqui!</strong><small>Promoção especial esta semana. Aproveite agora!</small></div>
+      </section>
+      <div className="shop-prototype__dots" aria-hidden="true"><i /><i /><i /></div>
 
-      <section className="shop-hero"><div><p className="eyebrow eyebrow--light">Cuidado que acompanha</p><h2>Itens pensados para sua jornada</h2><p>Uma vitrine demonstrativa de produtos MamaBloom.</p></div><Icon name="sparkles" size={40} /></section>
-
-      <div className="category-tabs" aria-label="Categorias da loja">
-        {categories.map((item) => <button className={category === item ? 'is-active' : ''} type="button" key={item} onClick={() => setCategory(item)}>{item}</button>)}
+      <div className="shop-prototype__search">
+        <h2>Compre aqui:</h2>
+        <label><Icon name="search" size={17} /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Pesquise aqui..." aria-label="Pesquisar produtos" /></label>
       </div>
 
-      {message && <p className="shop-message" role="status">{message}</p>}
-      <section className="product-grid" aria-label="Produtos">
-        {visibleProducts.map((product) => (
-          <article className={`product-card product-card--${product.tone}`} key={product.id}>
-            <span className="product-card__art"><Icon name={product.icon} size={34} /></span>
-            <small>{product.category}</small>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <footer><strong>{formatCurrency(product.price)}</strong><button type="button" onClick={() => addProduct(product)} aria-label={`Adicionar ${product.name}`}><Icon name="plus" size={19} /></button></footer>
-          </article>
-        ))}
-      </section>
+      <section className="shop-prototype__catalog">
+        <nav className="shop-prototype__tabs" aria-label="Filtros da loja">
+          <button className={tab === 'Promo' ? 'is-active' : ''} type="button" onClick={() => setTab('Promo')}>Promo</button>
+          <button className={tab === 'Favorito' ? 'is-active' : ''} type="button" onClick={() => setTab('Favorito')}>Favorito</button>
+          <Link to="/carrinho">Carrinho{cartCount ? ` (${cartCount})` : ''}</Link>
+        </nav>
 
-      <Link className="plans-banner" to="/planos"><div><p className="eyebrow">MamaBloom+</p><h2>Conheça nossos planos</h2><span>Mais recursos para acompanhar sua jornada</span></div><Icon name="chevronRight" /></Link>
+        {message && <p className="shop-prototype__message" role="status">{message}</p>}
+        <div className="shop-prototype__products" aria-label="Produtos">
+          {visibleProducts.length ? visibleProducts.map((product) => (
+            <article key={product.id}>
+              <span className="shop-prototype__discount">30%</span>
+              <img src={`${import.meta.env.BASE_URL}prototype/${product.image}`} alt={product.name} />
+              <button className={favorites.includes(product.id) ? 'shop-prototype__favorite is-favorite' : 'shop-prototype__favorite'} type="button" onClick={() => toggleFavorite(product.id)} aria-label={`${favorites.includes(product.id) ? 'Remover' : 'Adicionar'} ${product.name} dos favoritos`}>☆</button>
+              <h3>{product.name}</h3>
+              <p>{product.brand}</p>
+              <footer><strong>{formatCurrency(product.price)}</strong><button type="button" onClick={() => addProduct(product)} aria-label={`Adicionar ${product.name}`}><Icon name="bag" size={15} /></button></footer>
+            </article>
+          )) : <p className="shop-prototype__empty">Nenhum produto encontrado.</p>}
+        </div>
+      </section>
     </AppShell>
   )
 }

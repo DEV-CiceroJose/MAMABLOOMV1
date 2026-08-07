@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
 import BrandLogo from './BrandLogo.jsx'
 import Icon from './Icon.jsx'
+import PrototypeBottomNav from './prototype/PrototypeBottomNav.jsx'
 
 const menuItems = [
   { to: '/agenda', icon: 'calendar', label: 'Agenda' },
@@ -16,7 +17,7 @@ const menuItems = [
   { to: '/instituicoes', icon: 'building', label: 'Para instituições' },
 ]
 
-export default function AppShell({ children }) {
+export default function AppShell({ children, className = '', header = true, navTone = 'aqua' }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const { logout } = useAuth()
   const navigate = useNavigate()
@@ -27,17 +28,19 @@ export default function AppShell({ children }) {
   }
 
   return (
-    <main className="app-screen">
-      <header className="app-header">
-        <Link to="/inicio" aria-label="Ir para o início">
-          <BrandLogo compact />
-        </Link>
-        <div className="app-header__actions">
-          <button className="icon-button" type="button" aria-label="Abrir menu" onClick={() => setMenuOpen(true)}>
-            <Icon name="menu" />
-          </button>
-        </div>
-      </header>
+    <main className={`app-screen ${className}`.trim()}>
+      {typeof header === 'function' ? header({ openMenu: () => setMenuOpen(true) }) : header && (
+        <header className="app-header">
+          <Link to="/inicio" aria-label="Ir para o início">
+            <BrandLogo compact />
+          </Link>
+          <div className="app-header__actions">
+            <button className="icon-button" type="button" aria-label="Abrir menu" onClick={() => setMenuOpen(true)}>
+              <Icon name="menu" />
+            </button>
+          </div>
+        </header>
+      )}
 
       <button
         className={`drawer-backdrop${menuOpen ? ' drawer-backdrop--open' : ''}`}
@@ -68,20 +71,7 @@ export default function AppShell({ children }) {
       </aside>
 
       <div className="app-content">{children}</div>
-      <nav className="bottom-nav" aria-label="Navegação principal do aplicativo">
-        <NavLink className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`} to="/inicio">
-          <Icon name="home" />
-          <span>Início</span>
-        </NavLink>
-        <NavLink className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`} to="/bloomie">
-          <Icon name="message" />
-          <span>Bloomie</span>
-        </NavLink>
-        <NavLink className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`} to="/perfil">
-          <Icon name="profile" />
-          <span>Perfil</span>
-        </NavLink>
-      </nav>
+      <PrototypeBottomNav tone={navTone} />
     </main>
   )
 }

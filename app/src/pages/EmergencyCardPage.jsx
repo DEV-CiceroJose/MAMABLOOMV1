@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { bloodTypes } from '../data/demoData.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { useLocalData } from '../hooks/useLocalData.js'
@@ -9,10 +9,10 @@ import { useLocalData } from '../hooks/useLocalData.js'
 export default function EmergencyCardPage() {
   const { user } = useAuth()
   const [profile, setProfile] = useLocalData('mamabloom:emergency-card', () => ({
-    name: user?.name || '', weeks: user?.pregnancy?.weeks || 21, bloodType: 'Não informado', allergies: '', medications: '', contactName: '', contactPhone: '',
+    name: user?.name || 'Maria da Silva', weeks: user?.pregnancy?.weeks || 21, bloodType: 'Não informado', allergies: '', medications: '', contactName: '', contactPhone: '',
   }))
   const [draft, setDraft] = useState(profile)
-  const [editing, setEditing] = useState(!profile.contactPhone)
+  const [editing, setEditing] = useState(false)
 
   function saveCard(event) {
     event.preventDefault()
@@ -21,17 +21,18 @@ export default function EmergencyCardPage() {
   }
 
   return (
-    <AppShell>
-      <PageTitle
-        eyebrow="Acesso rápido"
-        title="Cartão de emergência"
-        action={!editing && <button className="round-action" type="button" onClick={() => setEditing(true)} aria-label="Editar cartão"><Icon name="edit" /></button>}
-      />
-
-      <aside className="local-data-note"><Icon name="lock" size={18} /><span>Estes dados ficam somente neste dispositivo nesta versão.</span></aside>
-
+    <AppShell
+      className="emergency-prototype"
+      header={({ openMenu }) => (
+        <header className="emergency-prototype__header">
+          <PrototypeToolbar onMenu={openMenu} />
+          <h1>Cartão de<br />Emergência</h1>
+        </header>
+      )}
+    >
       {editing ? (
-        <form className="feature-form emergency-form" onSubmit={saveCard}>
+        <form className="feature-form emergency-form emergency-prototype__form" onSubmit={saveCard}>
+          <div className="feature-form__heading"><h2>Editar informações</h2><button type="button" className="text-button" onClick={() => setEditing(false)}>Cancelar</button></div>
           <label className="field-label">Nome completo<input value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} required /></label>
           <div className="field-row">
             <label className="field-label">Semanas<input type="number" min="1" max="42" value={draft.weeks} onChange={(event) => setDraft({ ...draft, weeks: event.target.value })} /></label>
@@ -44,18 +45,23 @@ export default function EmergencyCardPage() {
           <button className="button button--primary button--wide" type="submit">Salvar cartão</button>
         </form>
       ) : (
-        <article className="emergency-card">
-          <header><span><Icon name="shield" size={30} /></span><div><small>MAMABLOOM · GESTANTE</small><h2>{profile.name}</h2><p>{profile.weeks} semanas de gestação</p></div></header>
-          <div className="emergency-card__grid">
-            <div><small>Tipo sanguíneo</small><strong>{profile.bloodType}</strong></div>
-            <div><small>Alergias</small><strong>{profile.allergies || 'Não informado'}</strong></div>
-            <div><small>Medicamentos</small><strong>{profile.medications || 'Não informado'}</strong></div>
-            <div><small>Contato de confiança</small><strong>{profile.contactName || 'Não informado'}</strong><a href={`tel:${profile.contactPhone}`}>{profile.contactPhone}</a></div>
-          </div>
-        </article>
-      )}
+        <>
+          <article className="emergency-prototype__identity">
+            <div className="emergency-prototype__landscape" aria-hidden="true"><i /><i /></div>
+            <div><h2>{profile.name}</h2><p>Gestante<br /><strong>32 anos</strong></p><a href={profile.contactPhone ? `tel:${profile.contactPhone}` : undefined}><Icon name="phone" size={17} /> {profile.contactPhone || '+55 81 98406-2699'}</a><span><Icon name="idCard" size={17} /> ***.***.***-**</span></div>
+          </article>
 
-      {!editing && <button className="button button--ghost button--wide print-button" type="button" onClick={() => window.print()}><Icon name="idCard" /> Imprimir ou salvar como PDF</button>}
+          <section className="emergency-prototype__options" aria-label="Informações de emergência">
+            <button type="button" onClick={() => setEditing(true)}><span className="emergency-prototype__option-icon">👣</span><strong>Tempo de<br />gestação</strong><i>›</i><small>{profile.weeks} semanas</small></button>
+            <button type="button" onClick={() => setEditing(true)}><span className="emergency-prototype__option-icon">🩸</span><strong>Tipo sanguíneo</strong><i>›</i><small>{profile.bloodType}</small></button>
+            <button type="button" onClick={() => setEditing(true)}><span className="emergency-prototype__option-icon">💊</span><strong>Medicamentos<br />em uso</strong><i>›</i><small>{profile.medications || 'Não informado'}</small></button>
+            <button type="button" onClick={() => setEditing(true)}><span className="emergency-prototype__option-icon">✋</span><strong>Alergias</strong><i>›</i><small>{profile.allergies || 'Não informado'}</small></button>
+            <button className="emergency-prototype__contact" type="button" onClick={() => setEditing(true)}><span><Icon name="users" size={28} /></span><strong>Contatos de emergência</strong><i>›</i></button>
+          </section>
+          <aside className="local-data-note emergency-prototype__note"><Icon name="lock" size={16} /><span>Dados armazenados somente neste dispositivo.</span></aside>
+          <button className="emergency-prototype__print" type="button" onClick={() => window.print()}><Icon name="idCard" size={18} /> Imprimir ou salvar como PDF</button>
+        </>
+      )}
     </AppShell>
   )
 }

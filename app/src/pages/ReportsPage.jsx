@@ -1,6 +1,6 @@
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { createDefaultAppointments, moods } from '../data/demoData.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { useLocalData } from '../hooks/useLocalData.js'
@@ -17,8 +17,7 @@ export default function ReportsPage() {
   const totalMoods = Math.max(entries.length, 1)
 
   return (
-    <AppShell>
-      <PageTitle eyebrow="Sua jornada" title="Relatório gestacional" action={<button className="round-action" type="button" onClick={() => window.print()} aria-label="Imprimir relatório"><Icon name="chart" /></button>} />
+    <AppShell className="wellness-prototype reports-prototype" header={({ openMenu }) => <header className="wellness-prototype__header"><button type="button" onClick={() => window.print()} aria-label="Imprimir relatório"><Icon name="chart" /></button><h1>Relatório gestacional</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
 
       <section className="report-hero">
         <div><p className="eyebrow eyebrow--light">Resumo atual</p><h2>{user?.name}, você está na {user?.pregnancy?.weeks ?? 21}ª semana</h2><p>Um panorama dos registros feitos neste dispositivo.</p></div>

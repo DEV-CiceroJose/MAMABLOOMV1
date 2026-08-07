@@ -1,19 +1,23 @@
 import { useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { moods } from '../data/demoData.js'
+import { useAuth } from '../hooks/useAuth.js'
 import { useLocalData } from '../hooks/useLocalData.js'
 import { formatLongDate, toDateKey } from '../lib/date.js'
 
 const createId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
 
 export default function DiaryPage() {
+  const { user } = useAuth()
   const [entries, setEntries] = useLocalData('mamabloom:diary', [])
   const [reminder, setReminder] = useLocalData('mamabloom:diary-reminder', false)
   const [mood, setMood] = useState('')
   const [text, setText] = useState('')
   const [message, setMessage] = useState('')
+  const [showComposer, setShowComposer] = useState(false)
+  const firstName = (user?.name || 'Maria').trim().split(/\s+/)[0]
 
   function saveEntry(event) {
     event.preventDefault()
@@ -26,14 +30,31 @@ export default function DiaryPage() {
     setMood('')
     setText('')
     setMessage('Registro salvo no seu dispositivo.')
+    setShowComposer(false)
+  }
+
+  function deleteEntry(entryId) {
+    setEntries((current) => current.filter((item) => item.id !== entryId))
   }
 
   return (
-    <AppShell>
-      <PageTitle eyebrow="Seu espaço" title="Diário gestacional" />
-
-      <form className="diary-composer" onSubmit={saveEntry}>
-        <div><p className="eyebrow">Check-in de hoje</p><h2>Como você está?</h2></div>
+    <AppShell
+      className="diary-prototype"
+      navTone="yellow"
+      header={({ openMenu }) => (
+        <header className="diary-prototype__header">
+          <PrototypeToolbar onMenu={openMenu} />
+          <div>
+            <h1>Bom dia,<br />{firstName} <span aria-hidden="true">🌸</span></h1>
+            <img src={`${import.meta.env.BASE_URL}brand/bee-baby.webp`} alt="" />
+          </div>
+          <p>Como você está se sentindo hoje?</p>
+        </header>
+      )}
+    >
+      <section className="diary-prototype__mood" aria-labelledby="mood-title">
+        <h2 id="mood-title"><span aria-hidden="true">😊</span> Mood do dia</h2>
+        <p>Como você se sente?</p>
         <div className="mood-picker" role="group" aria-label="Escolha seu humor">
           {moods.map((item) => (
             <button className={mood === item.id ? 'mood-option mood-option--selected' : 'mood-option'} type="button" key={item.id} onClick={() => { setMood(item.id); setMessage('') }} aria-pressed={mood === item.id}>
@@ -41,32 +62,43 @@ export default function DiaryPage() {
             </button>
           ))}
         </div>
-        <label className="field-label" htmlFor="diary-text">Escreva uma memória ou sentimento <span>(opcional)</span></label>
-        <textarea id="diary-text" rows="5" value={text} onChange={(event) => setText(event.target.value)} placeholder="Este é um espaço só seu..." />
-        {message && <p className="form-message" role="status">{message}</p>}
-        <button className="button button--primary button--wide" type="submit">Salvar no diário</button>
-      </form>
+      </section>
 
-      <label className="reminder-card">
-        <span><Icon name="clock" /><span><strong>Lembrete diário</strong><small>Reserve um momento para você</small></span></span>
+      <section className="diary-prototype__today" aria-labelledby="diary-today-title">
+        <header><h2 id="diary-today-title"><Icon name="calendar" size={22} /> Diário do dia</h2><time>{formatLongDate(toDateKey())}</time></header>
+        {showComposer ? (
+          <form onSubmit={saveEntry}>
+            <label htmlFor="diary-text">Querido diário,</label>
+            <textarea id="diary-text" rows="6" value={text} onChange={(event) => setText(event.target.value)} placeholder="Este é um espaço só seu..." />
+            {message && <p className="form-message" role="status">{message}</p>}
+            <button className="button button--primary button--wide" type="submit">Salvar no diário</button>
+          </form>
+        ) : (
+          <>
+            <div className="diary-prototype__preview">
+              <div className="diary-prototype__preview-copy">
+                <strong>Querido diário,</strong>
+                <p>{entries[0]?.text || 'Hoje é um novo dia para acolher meus sentimentos, registrar memórias e florescer no meu próprio ritmo.'}</p>
+                {entries[0] && <button type="button" onClick={() => deleteEntry(entries[0].id)} aria-label="Excluir registro mais recente"><Icon name="trash" size={16} /></button>}
+              </div>
+              <img src={`${import.meta.env.BASE_URL}prototype/support-mom.webp`} alt="Gestante registrando um momento da sua jornada" />
+            </div>
+            <button className="diary-prototype__write" type="button" onClick={() => setShowComposer(true)}><Icon name="edit" size={19} /> Escrever um novo</button>
+          </>
+        )}
+      </section>
+
+      <label className="diary-prototype__reminder">
+        <span><Icon name="bell" size={20} /><span><strong>Me lembre</strong><small>Dia de reflexão<br />Todo dia, às 9:00 PM</small></span></span>
         <input type="checkbox" checked={reminder} onChange={(event) => setReminder(event.target.checked)} />
       </label>
 
-      <section className="feature-section" aria-labelledby="diary-history-title">
-        <div className="section-heading"><div><p className="eyebrow">Memórias</p><h2 id="diary-history-title">Registros recentes</h2></div><span>{entries.length} {entries.length === 1 ? 'registro' : 'registros'}</span></div>
-        <div className="diary-list">
-          {entries.length ? entries.map((entry) => {
-            const entryMood = moods.find((item) => item.id === entry.mood)
-            return (
-              <article className="diary-entry" key={entry.id}>
-                <span className="diary-entry__mood">{entryMood?.emoji}</span>
-                <div><small>{formatLongDate(entry.date)} · {entryMood?.label}</small><p>{entry.text || 'Um momento registrado sem anotações.'}</p></div>
-                <button type="button" onClick={() => setEntries((current) => current.filter((item) => item.id !== entry.id))} aria-label="Excluir registro"><Icon name="trash" size={17} /></button>
-              </article>
-            )
-          }) : <div className="empty-state"><span className="empty-state__emoji">🌼</span><p>Seu primeiro registro pode começar hoje.</p></div>}
-        </div>
-      </section>
+      {entries.length > 1 && (
+        <section className="diary-prototype__history" aria-labelledby="diary-history-title">
+          <h2 id="diary-history-title">Registros recentes</h2>
+          {entries.slice(1).map((entry) => <article key={entry.id}><p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
+        </section>
+      )}
     </AppShell>
   )
 }

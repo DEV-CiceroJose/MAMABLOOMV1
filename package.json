@@ -1,0 +1,13 @@
+{
+  "name": "mamabloom-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:app": "pnpm --dir app build",
+    "build:site": "pnpm run build:app && node scripts/build-static-site.mjs",
+    "test:site": "node --test scripts/build-static-site.test.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

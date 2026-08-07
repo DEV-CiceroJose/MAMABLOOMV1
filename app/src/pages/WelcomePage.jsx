@@ -11,7 +11,8 @@ export default function WelcomePage() {
       <div className="welcome-screen__top">
         <BrandLogo />
         <div className="bee-scene" aria-hidden="true">
-          <span className="bee-scene__halo" />
+          <span className="bee-scene__bubble bee-scene__bubble--one" />
+          <span className="bee-scene__bubble bee-scene__bubble--two" />
           <img
             className="bee-scene__flower"
             src={`${import.meta.env.BASE_URL}brand/bee-flower.webp`}
@@ -25,9 +26,8 @@ export default function WelcomePage() {
         </div>
       </div>
       <section className="welcome-panel" aria-labelledby="welcome-title">
-        <p className="eyebrow eyebrow--light">Sua jornada começa aqui</p>
         <h1 id="welcome-title">Bem-vinda ao MamaBloom!</h1>
-        <p>Floresça na maternidade com informação, cuidado e acolhimento em cada etapa.</p>
+        <p>Um espaço seguro para acolher, informar e caminhar ao seu lado em cada fase da maternidade.</p>
         <div className="welcome-actions">
           {user ? (
             <Link className="button button--primary button--wide" to="/inicio">
@@ -36,16 +36,16 @@ export default function WelcomePage() {
             </Link>
           ) : (
             <>
-              <Link className="button button--primary button--wide" to="/cadastro">
-                Criar minha conta
-                <Icon name="arrowRight" />
+              <Link className="button button--primary" to="/cadastro">
+                Criar conta
               </Link>
-              <Link className="button button--ghost button--wide" to="/login">
-                Já tenho uma conta
+              <Link className="button button--ghost" to="/login">
+                Entrar
               </Link>
             </>
           )}
         </div>
+        <span className="welcome-policy">Política de Privacidade</span>
       </section>
     </main>
   )
