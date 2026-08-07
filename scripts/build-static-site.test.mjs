@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict'
+import { exec } from 'node:child_process'
 import { mkdtemp, readFile, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { promisify } from 'node:util'
 import test from 'node:test'
 import { buildStaticSite } from './build-static-site.mjs'
+
+const execAsync = promisify(exec)
 
 test('empacota landing e aplicativo no mesmo diretório estático', async () => {
   const output = await mkdtemp(join(tmpdir(), 'mamabloom-site-'))
@@ -20,4 +24,13 @@ test('recusa usar a raiz do repositório como saída', async () => {
     buildStaticSite({ rootDir: process.cwd(), outputDir: process.cwd() }),
     /saída segura/i,
   )
+})
+
+test('inclui o aplicativo no workspace usado pelo deploy', async () => {
+  const { stdout } = await execAsync('pnpm --recursive list --depth=-1 --json', {
+    cwd: process.cwd(),
+  })
+  const projects = JSON.parse(stdout)
+
+  assert.equal(projects.some((project) => project.name === 'mamabloom-app'), true)
 })

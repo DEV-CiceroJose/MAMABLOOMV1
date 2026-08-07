@@ -33,6 +33,10 @@ export default function DiaryPage() {
     setShowComposer(false)
   }
 
+  function deleteEntry(entryId) {
+    setEntries((current) => current.filter((item) => item.id !== entryId))
+  }
+
   return (
     <AppShell
       className="diary-prototype"
@@ -72,7 +76,11 @@ export default function DiaryPage() {
         ) : (
           <>
             <div className="diary-prototype__preview">
-              <div><strong>Querido diário,</strong><p>{entries[0]?.text || 'Hoje é um novo dia para acolher meus sentimentos, registrar memórias e florescer no meu próprio ritmo.'}</p></div>
+              <div className="diary-prototype__preview-copy">
+                <strong>Querido diário,</strong>
+                <p>{entries[0]?.text || 'Hoje é um novo dia para acolher meus sentimentos, registrar memórias e florescer no meu próprio ritmo.'}</p>
+                {entries[0] && <button type="button" onClick={() => deleteEntry(entries[0].id)} aria-label="Excluir registro mais recente"><Icon name="trash" size={16} /></button>}
+              </div>
               <img src={`${import.meta.env.BASE_URL}prototype/support-mom.webp`} alt="Gestante registrando um momento da sua jornada" />
             </div>
             <button className="diary-prototype__write" type="button" onClick={() => setShowComposer(true)}><Icon name="edit" size={19} /> Escrever um novo</button>
@@ -88,7 +96,7 @@ export default function DiaryPage() {
       {entries.length > 1 && (
         <section className="diary-prototype__history" aria-labelledby="diary-history-title">
           <h2 id="diary-history-title">Registros recentes</h2>
-          {entries.slice(1).map((entry) => <article key={entry.id}><p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => setEntries((current) => current.filter((item) => item.id !== entry.id))} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
+          {entries.slice(1).map((entry) => <article key={entry.id}><p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
         </section>
       )}
     </AppShell>

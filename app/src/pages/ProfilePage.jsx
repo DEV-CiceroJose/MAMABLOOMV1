@@ -45,12 +45,14 @@ export default function ProfilePage() {
       </section>
 
       <section className="profile-prototype__links" aria-label="Dados e cuidados">
-        <Link to="/saude"><span><Icon name="baby" /></span><strong>Mãe da Alícia, {weeks} semanas</strong></Link>
+        <Link to="/saude"><span><Icon name="baby" /></span><strong>Gestação em acompanhamento, {weeks} semanas</strong></Link>
         <Link to="/emergencia"><span><Icon name="shield" /></span><strong>Cartão de emergência</strong></Link>
+        <Link to="/agenda"><span><Icon name="calendar" /></span><strong>Minha Agenda</strong></Link>
         <Link to="/saude"><span><Icon name="edit" /></span><strong>Editar informações</strong></Link>
         <button type="button" onClick={shareProfile}><span><Icon name="share" /></span><strong>Compartilhar perfil</strong></button>
       </section>
       {shareMessage && <p className="profile-prototype__message" role="status">{shareMessage}</p>}
+      <aside className="profile-privacy"><Icon name="lock" /><div><strong>Privacidade nesta versão</strong><p>Seus registros são armazenados localmente no navegador. A sincronização segura entre dispositivos será conectada ao backend em uma etapa futura.</p></div></aside>
       <button className="profile-prototype__leave" type="button" onClick={leaveAccount}><Icon name="signOut" size={19} /> Deixar essa conta</button>
     </AppShell>
   )
