@@ -94,6 +94,16 @@ export default function HomePreviewPage() {
         </div>
         <span className="reading-card__badge"><Icon name="heart" size={24} /></span>
       </article>
+
+      <section aria-labelledby="journey-tools-title">
+        <div className="section-heading">
+          <div><p className="eyebrow">Acompanhe</p><h2 id="journey-tools-title">Sua jornada em perspectiva</h2></div>
+        </div>
+        <div className="journey-tools">
+          <Link to="/relatorios"><span><Icon name="chart" /></span><div><strong>Relatório gestacional</strong><small>Veja seus registros reunidos</small></div><Icon name="chevronRight" size={18} /></Link>
+          <Link to="/apoio"><span><Icon name="heart" /></span><div><strong>Central de apoio</strong><small>Respiração, acolhimento e sua rede</small></div><Icon name="chevronRight" size={18} /></Link>
+        </div>
+      </section>
     </AppShell>
   )
 }
