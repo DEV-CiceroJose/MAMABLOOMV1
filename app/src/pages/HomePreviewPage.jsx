@@ -104,6 +104,11 @@ export default function HomePreviewPage() {
           <Link to="/apoio"><span><Icon name="heart" /></span><div><strong>Central de apoio</strong><small>Respiração, acolhimento e sua rede</small></div><Icon name="chevronRight" size={18} /></Link>
         </div>
       </section>
+
+      <section className="commerce-preview" aria-labelledby="commerce-title">
+        <div><p className="eyebrow eyebrow--light">Universo MamaBloom</p><h2 id="commerce-title">Produtos e planos para florescer</h2><p>Conheça a vitrine e compare as experiências MamaBloom+.</p></div>
+        <div><Link to="/loja">Explorar loja <Icon name="chevronRight" size={17} /></Link><Link to="/planos">Ver planos</Link></div>
+      </section>
     </AppShell>
   )
 }

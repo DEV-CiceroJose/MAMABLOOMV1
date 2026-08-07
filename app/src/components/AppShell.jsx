@@ -11,6 +11,9 @@ const menuItems = [
   { to: '/emergencia', icon: 'shield', label: 'Cartão de emergência' },
   { to: '/relatorios', icon: 'chart', label: 'Relatório gestacional' },
   { to: '/apoio', icon: 'heart', label: 'Central de apoio' },
+  { to: '/loja', icon: 'bag', label: 'Loja MamaBloom' },
+  { to: '/planos', icon: 'sparkles', label: 'Planos MamaBloom+' },
+  { to: '/instituicoes', icon: 'building', label: 'Para instituições' },
 ]
 
 export default function AppShell({ children }) {
@@ -58,11 +61,6 @@ export default function AppShell({ children }) {
               <Icon name="chevronRight" size={18} />
             </NavLink>
           ))}
-          <button type="button" disabled>
-            <span><Icon name="home" /></span>
-            Loja
-            <small>Fase 4</small>
-          </button>
         </nav>
         <button className="drawer-logout" type="button" onClick={handleLogout}>
           <Icon name="signOut" /> Sair da conta
