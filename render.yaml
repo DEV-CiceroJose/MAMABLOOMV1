@@ -1,0 +1,10 @@
+services:
+  - type: web
+    runtime: static
+    name: mamabloom
+    buildCommand: corepack enable && pnpm --dir app install --frozen-lockfile && pnpm run build:site
+    staticPublishPath: ./site-dist
+    routes:
+      - type: rewrite
+        source: /app/*
+        destination: /app/index.html
