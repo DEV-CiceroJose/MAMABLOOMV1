@@ -1071,7 +1071,7 @@
 .diary-prototype__preview p { margin: 0; font-size: 0.7rem; font-weight: 700; line-height: 1.35; }
 .diary-prototype__preview img { width: 108px; height: 162px; border-radius: 12px; object-fit: cover; background: var(--proto-aqua-soft); }
 .diary-prototype__preview-copy { position: relative; padding-bottom: 38px; }
-.diary-prototype__preview-copy button { position: absolute; left: 0; bottom: 0; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; color: #8e5659; background: #fff; }
+.diary-prototype__preview-copy button { position: absolute; left: 0; bottom: 0; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; color: #8e5659; background: #fff; }
 .diary-prototype__write { width: calc(100% - 52px); min-height: 34px; margin: 8px 26px 0; border: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--proto-aqua); background: var(--proto-aqua-soft); font-size: 0.75rem; font-weight: 800; }
 .diary-prototype__today form { display: grid; gap: 9px; }
 .diary-prototype__today form label { font-size: 0.76rem; font-weight: 800; }
@@ -1565,8 +1565,8 @@
 
 .shop-prototype__tabs { margin: 0 5px 13px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .shop-prototype__tabs button,
-.shop-prototype__tabs a { min-height: 41px; padding: 0 8px; border: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--proto-yellow); background: #fff; font-size: 0.78rem; font-weight: 800; text-decoration: none; }
-.shop-prototype__tabs .is-active { color: #fff; background: var(--proto-yellow); }
+.shop-prototype__tabs a { min-height: 41px; padding: 0 8px; border: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #2b6f76; background: #fff; font-size: 0.78rem; font-weight: 800; text-decoration: none; }
+.shop-prototype__tabs .is-active { color: #43423e; background: var(--proto-yellow); }
 .shop-prototype__message { margin: 0 8px 10px; color: #fff; font-size: 0.68rem; text-align: center; }
 
 .shop-prototype__products {
@@ -1586,13 +1586,13 @@
 
 .shop-prototype__products article > img { width: 100%; height: 93px; border-radius: 50%; object-fit: contain; background: #f7f7f6; }
 .shop-prototype__discount { position: absolute; z-index: 1; right: 8px; top: 8px; padding: 3px 10px; border-radius: 999px; color: #43423e; background: var(--proto-yellow); font-size: 0.6rem; font-weight: 800; }
-.shop-prototype__favorite { position: absolute; right: 0; bottom: 23px; min-width: 40px; min-height: 40px; padding: 0; border: 0; display: grid; place-items: center; color: var(--proto-aqua); background: transparent; font-size: 1.2rem; line-height: 1; }
-.shop-prototype__favorite.is-favorite { color: var(--proto-yellow); }
-.shop-prototype__products h3 { margin: 1px 0 0; overflow: hidden; color: var(--proto-yellow); font-family: var(--font-body); font-size: 0.67rem; text-overflow: ellipsis; white-space: nowrap; }
+.shop-prototype__favorite { position: absolute; right: 0; bottom: 23px; min-width: 40px; min-height: 40px; padding: 0; border: 0; display: grid; place-items: center; color: #2b6f76; background: transparent; font-size: 1.2rem; line-height: 1; }
+.shop-prototype__favorite.is-favorite { color: #7a5700; }
+.shop-prototype__products h3 { margin: 1px 0 0; overflow: hidden; color: #2b6f76; font-family: var(--font-body); font-size: 0.67rem; text-overflow: ellipsis; white-space: nowrap; }
 .shop-prototype__products p { margin: 1px 0 0; overflow: hidden; color: #55534e; font-size: 0.58rem; text-overflow: ellipsis; white-space: nowrap; }
 .shop-prototype__products footer { min-height: 20px; display: flex; align-items: flex-end; justify-content: flex-end; gap: 4px; }
 .shop-prototype__products footer strong { font-size: 0.66rem; }
-.shop-prototype__products footer button { min-width: 40px; min-height: 40px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--proto-aqua); }
+.shop-prototype__products footer button { min-width: 40px; min-height: 40px; padding: 0; border: 0; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #2b6f76; }
 .shop-prototype__empty { grid-column: 1 / -1; padding: 30px; color: #fff; text-align: center; }
 
 /* Carrinho e planos: extensão da linguagem visual da loja. */
