@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useLocalData } from '../hooks/useLocalData.js'
 import { formatLongDate, toDateKey } from '../lib/date.js'
 
@@ -20,8 +20,7 @@ export default function HealthPage() {
   }
 
   return (
-    <AppShell>
-      <PageTitle eyebrow="Bem-estar" title="Saúde da mamãe" />
+    <AppShell className="wellness-prototype health-prototype" header={({ openMenu }) => <header className="wellness-prototype__header"><span><Icon name="activity" /></span><h1>Saúde da mamãe</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
 
       <aside className="safety-notice">
         <Icon name="alert" />

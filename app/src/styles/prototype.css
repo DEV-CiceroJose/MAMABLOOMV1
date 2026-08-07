@@ -1625,3 +1625,94 @@
   .shop-prototype__products > article { padding-inline: 6px; }
   .commerce-prototype__header { padding-inline: 14px; }
 }
+
+/* Telas complementares: mesma identidade das telas Canva. */
+.wellness-prototype { background: var(--proto-cream); }
+
+.wellness-prototype__header {
+  min-height: 120px;
+  padding: 18px 20px;
+  border-radius: 0 0 50px 50px;
+  display: grid;
+  grid-template-columns: 46px 1fr 92px;
+  gap: 8px;
+  align-items: center;
+  background: var(--proto-yellow-soft);
+}
+
+.wellness-prototype__header > span,
+.wellness-prototype__header > button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--proto-aqua);
+}
+
+.wellness-prototype__header h1 {
+  margin: 0;
+  color: var(--proto-aqua-dark);
+  font-size: 1.55rem;
+  line-height: 0.98;
+  text-align: center;
+  text-shadow: 0 2px 0 #fff;
+}
+
+.wellness-prototype__header .prototype-toolbar { grid-template-columns: 0 38px 38px; }
+.wellness-prototype .app-content { padding: 25px 20px 48px; gap: 18px; }
+
+.health-prototype .safety-notice {
+  border: 0;
+  border-radius: 20px;
+  color: #716744;
+  background: var(--proto-yellow-soft);
+}
+
+.health-prototype .health-check {
+  border-radius: 24px;
+  background: var(--proto-aqua-soft);
+  box-shadow: var(--proto-shadow);
+}
+
+.health-prototype .health-check h2,
+.health-prototype .health-check .eyebrow { color: var(--proto-aqua-dark); }
+.health-prototype .energy-scale button.is-selected,
+.health-prototype .choice-pills button.is-selected { color: #fff; background: var(--proto-aqua); }
+.health-prototype .health-check .button { max-width: 210px; margin: 0 auto; background: var(--proto-aqua-dark); }
+.health-prototype .latest-check { border-radius: 20px; background: #fff; box-shadow: var(--proto-shadow); }
+
+.reports-prototype .report-hero {
+  border-radius: 26px;
+  background: var(--proto-aqua);
+  box-shadow: var(--proto-shadow);
+}
+
+.reports-prototype .report-metrics { gap: 9px; }
+.reports-prototype .report-metrics article { border-radius: 20px; background: var(--proto-yellow-soft); }
+.reports-prototype .report-metrics article:nth-child(2) { background: var(--proto-aqua-soft); }
+.reports-prototype .report-section { padding: 18px; border-radius: 22px; background: #fff; box-shadow: var(--proto-shadow); }
+.reports-prototype .mood-report i { background: var(--proto-aqua); }
+.reports-prototype .report-check { background: var(--proto-aqua-soft); }
+.reports-prototype .report-disclaimer { border-radius: 19px; background: var(--proto-yellow-soft); }
+
+.institutional-prototype .institutional-hero {
+  border-radius: 27px;
+  background: var(--proto-aqua);
+  box-shadow: var(--proto-shadow);
+}
+
+.institutional-prototype .impact-grid { gap: 10px; }
+.institutional-prototype .impact-grid article { border-radius: 20px; background: #fff; box-shadow: var(--proto-shadow); }
+.institutional-prototype .impact-grid article:nth-child(2) { background: var(--proto-yellow-soft); }
+.institutional-prototype .institutional-form { border-radius: 24px; background: var(--proto-aqua-soft); box-shadow: var(--proto-shadow); }
+.institutional-prototype .institutional-form .button { max-width: 220px; margin: 0 auto; background: var(--proto-aqua-dark); }
+.institutional-prototype .institutional-success { border-radius: 25px; background: var(--proto-aqua-soft); }
+
+@media (max-width: 370px) {
+  .wellness-prototype__header { padding-inline: 14px; grid-template-columns: 42px 1fr 84px; }
+  .wellness-prototype__header h1 { font-size: 1.28rem; }
+}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
-import PageTitle from '../components/PageTitle.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useLocalData } from '../hooks/useLocalData.js'
 
 const createId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
@@ -18,8 +18,7 @@ export default function InstitutionalPage() {
   }
 
   return (
-    <AppShell>
-      <PageTitle eyebrow="MamaBloom Instituições" title="Cuidado em escala" />
+    <AppShell className="wellness-prototype institutional-prototype" header={({ openMenu }) => <header className="wellness-prototype__header"><span><Icon name="building" /></span><h1>MamaBloom Instituições</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
       <section className="institutional-hero"><div><p className="eyebrow eyebrow--light">Solução B2G e corporativa</p><h2>Apoio à jornada materna com visão de impacto</h2><p>Uma proposta para organizações que desejam ampliar acolhimento, informação e acompanhamento.</p></div><Icon name="building" size={46} /></section>
 
       <section className="impact-grid" aria-label="Benefícios institucionais">
