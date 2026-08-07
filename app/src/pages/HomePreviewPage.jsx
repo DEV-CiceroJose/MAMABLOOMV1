@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
 import IllustratedActionCard from '../components/prototype/IllustratedActionCard.jsx'
-import PrototypeSearch from '../components/prototype/PrototypeSearch.jsx'
+import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 
 const extraLinks = [
@@ -26,15 +26,7 @@ export default function HomePreviewPage() {
       className="home-prototype"
       header={({ openMenu }) => (
         <section className="home-prototype__hero" aria-labelledby="home-greeting">
-          <div className="home-prototype__toolbar">
-            <PrototypeSearch />
-            <Link className="home-prototype__tool" to="/perfil" aria-label="Configurações">
-              <Icon name="settings" size={23} />
-            </Link>
-            <button className="home-prototype__menu" type="button" aria-label="Abrir menu" onClick={openMenu}>
-              <Icon name="menu" size={31} />
-            </button>
-          </div>
+          <PrototypeToolbar className="home-prototype__toolbar" search onMenu={openMenu} />
           <div className="home-prototype__journey">
             <div>
               <h1 id="home-greeting">{firstName}</h1>

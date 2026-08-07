@@ -4,7 +4,7 @@ export default function PrototypeSearch({ label = 'Pesquisar', onChange, placeho
   return (
     <label className="prototype-search">
       <span className="sr-only">{label}</span>
-      <input type="search" aria-label={label} placeholder={placeholder} value={value} onChange={onChange} />
+      <input type="search" aria-label={label} placeholder={placeholder} value={value} onChange={onChange} readOnly={!onChange} />
       <span className="prototype-search__icon"><Icon name="search" size={17} /></span>
     </label>
   )
