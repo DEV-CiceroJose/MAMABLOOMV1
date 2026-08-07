@@ -13,7 +13,11 @@ test('empacota landing e aplicativo no mesmo diretório estático', async () => 
   const output = await mkdtemp(join(tmpdir(), 'mamabloom-site-'))
   await buildStaticSite({ rootDir: process.cwd(), outputDir: output })
 
-  assert.match(await readFile(join(output, 'index.html'), 'utf8'), /MamaBloom/i)
+  const landingHtml = await readFile(join(output, 'index.html'), 'utf8')
+
+  assert.match(landingHtml, /MamaBloom/i)
+  assert.equal(landingHtml.match(/href="\/app\/"/g)?.length, 2)
+  assert.equal(landingHtml.match(/>Acessar o app<\/a>/g)?.length, 2)
   assert.match(await readFile(join(output, 'app', 'index.html'), 'utf8'), /\/app\/assets\//)
   assert.equal((await stat(join(output, 'css'))).isDirectory(), true)
   assert.equal((await stat(join(output, 'app', 'assets'))).isDirectory(), true)
