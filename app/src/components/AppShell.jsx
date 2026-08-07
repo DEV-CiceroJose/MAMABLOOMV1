@@ -9,6 +9,8 @@ const menuItems = [
   { to: '/diario', icon: 'message', label: 'Diário gestacional' },
   { to: '/saude', icon: 'activity', label: 'Saúde da mamãe' },
   { to: '/emergencia', icon: 'shield', label: 'Cartão de emergência' },
+  { to: '/relatorios', icon: 'chart', label: 'Relatório gestacional' },
+  { to: '/apoio', icon: 'heart', label: 'Central de apoio' },
 ]
 
 export default function AppShell({ children }) {
@@ -57,11 +59,6 @@ export default function AppShell({ children }) {
             </NavLink>
           ))}
           <button type="button" disabled>
-            <span><Icon name="message" /></span>
-            Apoio e Bloomie
-            <small>Fase 3</small>
-          </button>
-          <button type="button" disabled>
             <span><Icon name="home" /></span>
             Loja
             <small>Fase 4</small>
@@ -78,10 +75,10 @@ export default function AppShell({ children }) {
           <Icon name="home" />
           <span>Início</span>
         </NavLink>
-        <button className="bottom-nav__item" type="button" disabled title="Disponível na Fase 3">
+        <NavLink className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`} to="/bloomie">
           <Icon name="message" />
           <span>Bloomie</span>
-        </button>
+        </NavLink>
         <NavLink className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`} to="/perfil">
           <Icon name="profile" />
           <span>Perfil</span>
