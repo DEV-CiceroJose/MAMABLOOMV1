@@ -239,3 +239,305 @@
   .prototype-header { padding-inline: 16px; }
   .prototype-bottom-nav { width: calc(100% - 34px); }
 }
+
+/* Entrada e autenticação — composição baseada nas telas 1 a 4 do Canva. */
+.welcome-screen {
+  color: var(--proto-ink);
+  background: var(--proto-cream);
+}
+
+.welcome-screen__top {
+  min-height: 535px;
+  padding-top: 24px;
+  background:
+    radial-gradient(circle at 12% 22%, rgb(114 205 212 / 16%) 0 34px, transparent 35px),
+    radial-gradient(circle at 88% 37%, rgb(255 214 119 / 24%) 0 25px, transparent 26px),
+    var(--proto-cream);
+}
+
+.welcome-screen__top > .brand-logo {
+  width: 208px;
+  height: 112px;
+}
+
+.bee-scene {
+  inset: 120px 0 0;
+}
+
+.bee-scene__bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(114 205 212 / 16%);
+}
+
+.bee-scene__bubble--one {
+  width: 212px;
+  height: 212px;
+  right: 22px;
+  top: 18px;
+}
+
+.bee-scene__bubble--two {
+  width: 118px;
+  height: 118px;
+  left: 30px;
+  top: 225px;
+  background: rgb(255 214 119 / 25%);
+}
+
+.bee-scene__flower {
+  width: 252px;
+  right: 4px;
+  top: 6px;
+  transform: rotate(2deg);
+}
+
+.bee-scene__baby {
+  width: 166px;
+  left: 14px;
+  top: 212px;
+  transform: rotate(-7deg);
+}
+
+.welcome-panel {
+  isolation: isolate;
+  min-height: 370px;
+  margin-top: -18px;
+  padding: 48px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4f4637;
+  background: var(--proto-yellow);
+  border-radius: 0;
+  text-align: center;
+}
+
+.welcome-panel::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 126%;
+  height: 82px;
+  left: -13%;
+  top: -45px;
+  border-radius: 50%;
+  background: var(--proto-cream);
+}
+
+.welcome-panel h1 {
+  max-width: 340px;
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: clamp(2rem, 9.6vw, 2.55rem);
+  line-height: 0.98;
+  text-shadow: 0 3px 0 rgb(190 133 36 / 12%);
+}
+
+.welcome-panel > p:not(.eyebrow) {
+  max-width: 350px;
+  margin: 0 0 22px;
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+
+.welcome-actions {
+  width: min(100%, 330px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.welcome-actions .button {
+  min-height: 46px;
+  padding-inline: 15px;
+  color: #fff;
+  background: var(--proto-aqua-dark);
+  border: 0;
+  box-shadow: 0 7px 14px rgb(55 146 154 / 22%);
+  font-size: 0.86rem;
+}
+
+.welcome-actions .button:only-child {
+  grid-column: 1 / -1;
+}
+
+.welcome-policy {
+  margin-top: auto;
+  padding-top: 18px;
+  color: #756244;
+  font-size: 0.68rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth-screen--canva {
+  padding-top: 294px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--proto-cream);
+}
+
+.auth-screen--canva .auth-curve {
+  height: 320px;
+  overflow: hidden;
+  background: var(--proto-aqua);
+  border-radius: 0 0 68% 18% / 0 0 25% 12%;
+}
+
+.auth-screen--canva .auth-curve::after {
+  display: none;
+}
+
+.auth-curve__accent {
+  position: absolute;
+  width: 128%;
+  height: 34px;
+  left: -24%;
+  bottom: -5px;
+  border-radius: 50%;
+  background: var(--proto-yellow);
+  transform: rotate(4deg);
+}
+
+.auth-curve__bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 15%);
+}
+
+.auth-curve__bubble--one {
+  width: 130px;
+  height: 130px;
+  left: -44px;
+  top: 33px;
+}
+
+.auth-curve__bubble--two {
+  width: 72px;
+  height: 72px;
+  right: 28px;
+  top: 30px;
+}
+
+.auth-screen--canva .auth-bee {
+  width: 248px;
+  right: 18px;
+  top: 30px;
+  filter: drop-shadow(0 12px 16px rgb(48 102 105 / 15%));
+  transform: rotate(2deg);
+}
+
+.auth-screen--canva .auth-bee--baby {
+  width: 220px;
+  right: 14px;
+  top: 38px;
+  transform: rotate(-2deg);
+}
+
+.auth-screen--canva .auth-card {
+  min-height: calc(100svh - 294px);
+  padding: 28px 30px 34px;
+  background: var(--proto-cream);
+  border-radius: 34px 34px 0 0;
+}
+
+.auth-card__intro {
+  margin-bottom: 20px;
+}
+
+.auth-screen--canva .auth-card h1 {
+  margin: 0 0 4px;
+  color: var(--proto-aqua-dark);
+  font-size: clamp(2rem, 9.6vw, 2.55rem);
+  line-height: 1;
+  text-shadow: 0 2px 0 #fff;
+}
+
+.auth-screen--canva .auth-subtitle {
+  max-width: 330px;
+  margin: 0;
+  color: #68685f;
+  font-size: 0.86rem;
+  line-height: 1.42;
+}
+
+.auth-screen--canva .eyebrow {
+  margin-bottom: 3px;
+  color: #b59342;
+  font-size: 0.64rem;
+}
+
+.auth-screen--canva .auth-form {
+  gap: 13px;
+}
+
+.auth-screen--canva .form-field {
+  gap: 5px;
+}
+
+.auth-screen--canva .form-field > label {
+  padding-left: 10px;
+  color: #595850;
+  font-size: 0.77rem;
+}
+
+.auth-screen--canva .input-wrap {
+  min-height: 48px;
+  padding-inline: 14px;
+  border-color: #f0d995;
+  color: #bd8f24;
+  background: var(--proto-yellow-soft);
+  box-shadow: 0 5px 12px rgb(131 112 62 / 7%);
+}
+
+.auth-screen--canva .input-wrap input {
+  font-size: 0.87rem;
+}
+
+.auth-screen--canva .button--wide {
+  width: min(100%, 196px);
+  min-height: 46px;
+  margin: 3px auto 0;
+  padding-inline: 22px;
+  background: var(--proto-aqua-dark);
+  font-size: 0.87rem;
+  box-shadow: 0 8px 16px rgb(56 167 177 / 22%);
+}
+
+.auth-screen--canva .form-meta {
+  margin-top: -5px;
+}
+
+.auth-screen--canva .text-button,
+.auth-screen--canva .auth-switch,
+.auth-screen--canva .prototype-note,
+.auth-screen--canva .form-helper {
+  font-size: 0.72rem;
+}
+
+.auth-screen--canva .check-field {
+  padding-inline: 5px;
+  font-size: 0.72rem;
+}
+
+.auth-screen--canva .pregnancy-preview {
+  min-height: 64px;
+  padding: 8px 14px;
+  border: 1px solid #f0d995;
+  border-radius: 999px;
+  background: var(--proto-yellow-soft);
+  box-shadow: 0 5px 12px rgb(131 112 62 / 7%);
+}
+
+.auth-screen--canva .pregnancy-preview__icon {
+  width: 44px;
+  height: 44px;
+  color: var(--proto-aqua-dark);
+}
+
+@media (max-width: 370px) {
+  .welcome-screen__top { min-height: 505px; }
+  .welcome-panel { padding-inline: 22px; }
+  .auth-screen--canva .auth-card { padding-inline: 22px; }
+}

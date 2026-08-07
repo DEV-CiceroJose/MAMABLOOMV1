@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+import AuthFrame from '../AuthFrame.jsx'
 import CanvaCard from './CanvaCard.jsx'
 import PrototypeBottomNav from './PrototypeBottomNav.jsx'
 import PrototypeHeader from './PrototypeHeader.jsx'
@@ -22,5 +23,19 @@ describe('componentes visuais do protótipo', () => {
   it('aplica o tom solicitado ao card do Canva', () => {
     render(<CanvaCard tone="yellow">Conteúdo</CanvaCard>)
     expect(screen.getByText('Conteúdo')).toHaveClass('canva-card--yellow')
+  })
+
+  it('usa a composição curva do Canva nas telas de autenticação', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <AuthFrame title="Login" subtitle="Acesse sua conta.">
+          <span>Formulário</span>
+        </AuthFrame>
+      </MemoryRouter>,
+    )
+
+    expect(container.querySelector('.auth-screen--canva')).toBeInTheDocument()
+    expect(container.querySelector('.auth-curve__accent')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument()
   })
 })

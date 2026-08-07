@@ -32,7 +32,7 @@ export default function PregnancyStepPage() {
   }
 
   return (
-    <AuthFrame title="Sua gestação" subtitle="Usaremos esta informação para personalizar a experiência." step="Etapa 2 de 2">
+    <AuthFrame title="Sua gestação" subtitle="Conte em que momento dessa jornada você está." step="Etapa 2 de 2" illustration="baby">
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <FormField
           id="lastPeriod"

@@ -28,7 +28,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthFrame title="Login" subtitle="Entre na sua conta para continuar sua jornada.">
+    <AuthFrame title="Login" subtitle="Entre na sua conta e continue florescendo com a gente.">
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <FormField
           id="identity"
@@ -72,7 +72,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="auth-switch">Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link></p>
-      <p className="prototype-note">Nesta fase, o acesso é demonstrativo e fica salvo somente neste navegador.</p>
+      <p className="prototype-note">Acesso demonstrativo salvo somente neste navegador.</p>
     </AuthFrame>
   )
 }

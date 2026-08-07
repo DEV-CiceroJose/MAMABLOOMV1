@@ -43,7 +43,7 @@ export default function RegisterPage() {
   return (
     <AuthFrame
       title="Cadastro"
-      subtitle="Conte um pouco sobre você. Seus dados ainda são apenas demonstrativos."
+      subtitle="Preencha seus dados para começar sua jornada com o MamaBloom."
       step="Etapa 1 de 2"
       illustration="baby"
     >
@@ -70,7 +70,7 @@ export default function RegisterPage() {
         />
         <label className="check-field">
           <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
-          <span>Confirmo que tenho 16 anos ou mais e concordo com o uso demonstrativo dos dados.</span>
+          <span>Confirmo que tenho 16 anos ou mais e concordo com a Política de Privacidade.</span>
         </label>
         {errors.accepted && <p className="field-error">{errors.accepted}</p>}
         <button className="button button--primary button--wide" type="submit">Avançar <Icon name="arrowRight" /></button>
