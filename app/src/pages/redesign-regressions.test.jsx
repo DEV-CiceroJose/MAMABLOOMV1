@@ -8,8 +8,9 @@ import ProfilePage from './ProfilePage.jsx'
 const authValue = {
   logout: vi.fn(),
   user: {
+    id: 'user-a',
     name: 'Maria da Silva',
-    identity: 'maria@example.com',
+    email: 'maria@example.com',
     pregnancy: { weeks: 21 },
   },
 }
@@ -30,14 +31,15 @@ afterEach(() => {
 
 describe('regressões do redesign', () => {
   it('permite excluir o registro mais recente do diário', () => {
-    window.localStorage.setItem('mamabloom:diary', JSON.stringify([
+    const diaryKey = 'mamabloom:user:user-a:diary'
+    window.localStorage.setItem(diaryKey, JSON.stringify([
       { id: 'entry-latest', mood: 'feliz', text: 'Registro mais recente', date: '2026-08-07' },
     ]))
 
     renderPage(<DiaryPage />, '/diario')
     fireEvent.click(screen.getByRole('button', { name: 'Excluir registro mais recente' }))
 
-    expect(JSON.parse(window.localStorage.getItem('mamabloom:diary'))).toEqual([])
+    expect(JSON.parse(window.localStorage.getItem(diaryKey))).toEqual([])
     expect(screen.queryByText('Registro mais recente')).not.toBeInTheDocument()
   })
 
@@ -47,11 +49,22 @@ describe('regressões do redesign', () => {
     expect(screen.getByRole('link', { name: /Agenda/ })).toHaveAttribute('href', '/agenda')
   })
 
-  it('explica no perfil onde os dados são armazenados', () => {
+  it('mostra a conta e explica a sincronização segura no perfil', () => {
     renderPage(<ProfilePage />, '/perfil')
 
-    expect(screen.getByText('Privacidade nesta versão')).toBeInTheDocument()
-    expect(screen.getByText(/armazenados localmente no navegador/i)).toBeInTheDocument()
+    expect(screen.getByText('maria@example.com')).toBeInTheDocument()
+    expect(screen.getByText('Privacidade e sincronização')).toBeInTheDocument()
+    expect(screen.getByText(/sincronizados com segurança/i)).toBeInTheDocument()
+  })
+
+  it('não exibe dados locais pertencentes a outra conta', () => {
+    window.localStorage.setItem('mamabloom:user:user-b:diary', JSON.stringify([
+      { id: 'private-entry', mood: 'feliz', text: 'Registro privado de outra conta', date: '2026-08-07' },
+    ]))
+
+    renderPage(<DiaryPage />, '/diario')
+
+    expect(screen.queryByText('Registro privado de outra conta')).not.toBeInTheDocument()
   })
 
 })

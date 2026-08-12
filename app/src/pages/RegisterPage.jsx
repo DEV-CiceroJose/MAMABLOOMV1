@@ -16,14 +16,15 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [accepted, setAccepted] = useState(false)
   const [errors, setErrors] = useState({})
-  const { saveRegistrationDraft } = useAuth()
+  const [submitting, setSubmitting] = useState(false)
+  const { register } = useAuth()
   const navigate = useNavigate()
 
   function update(field) {
     return (event) => setForm((current) => ({ ...current, [field]: event.target.value }))
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     const nextErrors = {}
     if (form.name.trim().split(/\s+/).length < 2) nextErrors.name = 'Informe seu nome e sobrenome.'
@@ -35,9 +36,15 @@ export default function RegisterPage() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return
 
-    const { password: _password, ...safeDraft } = form
-    saveRegistrationDraft(safeDraft)
-    navigate('/cadastro/gestacao')
+    setSubmitting(true)
+    try {
+      await register(form)
+      navigate('/cadastro/gestacao')
+    } catch (error) {
+      setErrors({ ...(error.fields ?? {}), form: error.message })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -73,7 +80,8 @@ export default function RegisterPage() {
           <span>Confirmo que tenho 16 anos ou mais e concordo com a Política de Privacidade.</span>
         </label>
         {errors.accepted && <p className="field-error">{errors.accepted}</p>}
-        <button className="button button--primary button--wide" type="submit">Avançar <Icon name="arrowRight" /></button>
+        {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
+        <button className="button button--primary button--wide" type="submit" disabled={submitting}>{submitting ? 'Criando conta...' : 'Avançar'} <Icon name="arrowRight" /></button>
       </form>
       <p className="auth-switch">Já possui uma conta? <Link to="/login">Entrar</Link></p>
     </AuthFrame>

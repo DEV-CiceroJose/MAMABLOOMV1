@@ -22,11 +22,12 @@ O comando executa análise estática, testes e build de produção.
 ## Escopo atual
 
 - boas-vindas;
-- login demonstrativo;
+- login real por e-mail ou CPF;
 - cadastro em duas etapas;
 - cálculo inicial da semana gestacional;
-- sessão local simulada;
+- sessão protegida por cookie `HttpOnly`;
+- sincronização com a API, mantendo contingência local isolada por conta quando a conexão oscila;
 - shell mobile e navegação protegida;
 - design system baseado no protótipo do Canva.
 
-Não existe backend nesta fase. Nenhum dado deve ser considerado persistência de produção.
+Configure `VITE_API_URL` para apontar para a API. Sem essa variável, o ambiente de desenvolvimento usa `http://localhost:3001`.

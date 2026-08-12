@@ -41,7 +41,7 @@ export default function ProfilePage() {
       <section className="profile-prototype__identity">
         <div className="profile-prototype__avatar"><Icon name="user" size={72} /></div>
         <h2>{fullName}</h2>
-        <p>{user?.identity || 'mariadasilva@gmail.com'}</p>
+        <p>{user?.email || 'E-mail não informado'}</p>
       </section>
 
       <section className="profile-prototype__links" aria-label="Dados e cuidados">
@@ -52,7 +52,7 @@ export default function ProfilePage() {
         <button type="button" onClick={shareProfile}><span><Icon name="share" /></span><strong>Compartilhar perfil</strong></button>
       </section>
       {shareMessage && <p className="profile-prototype__message" role="status">{shareMessage}</p>}
-      <aside className="profile-privacy"><Icon name="lock" /><div><strong>Privacidade nesta versão</strong><p>Seus registros são armazenados localmente no navegador. A sincronização segura entre dispositivos será conectada ao backend em uma etapa futura.</p></div></aside>
+      <aside className="profile-privacy"><Icon name="lock" /><div><strong>Privacidade e sincronização</strong><p>Seus registros ficam disponíveis neste dispositivo e são sincronizados com segurança na sua conta MamaBloom quando há conexão.</p></div></aside>
       <button className="profile-prototype__leave" type="button" onClick={leaveAccount}><Icon name="signOut" size={19} /> Deixar essa conta</button>
     </AppShell>
   )

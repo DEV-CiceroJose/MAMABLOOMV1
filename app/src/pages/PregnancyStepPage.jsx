@@ -17,18 +17,28 @@ function calculateWeeks(value) {
 export default function PregnancyStepPage() {
   const [lastPeriod, setLastPeriod] = useState('')
   const [error, setError] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const weeks = useMemo(() => calculateWeeks(lastPeriod), [lastPeriod])
   const { finishRegistration } = useAuth()
   const navigate = useNavigate()
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     if (!isNotFutureDate(lastPeriod) || weeks === null || weeks > 42) {
       setError('Confira a data informada. Para o protótipo, ela deve resultar em até 42 semanas.')
       return
     }
-    finishRegistration({ lastPeriod, weeks })
-    navigate('/inicio', { replace: true })
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await finishRegistration({ lastPeriod, weeks })
+      navigate('/inicio', { replace: true })
+    } catch (submissionError) {
+      setSubmitError(submissionError.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -51,7 +61,8 @@ export default function PregnancyStepPage() {
           </div>
         </div>
         <p className="form-helper">Essa estimativa não substitui a avaliação e a datação realizadas no pré-natal.</p>
-        <button className="button button--primary button--wide" type="submit">Concluir cadastro <Icon name="check" /></button>
+        {submitError && <p className="field-error" role="alert">{submitError}</p>}
+        <button className="button button--primary button--wide" type="submit" disabled={submitting}>{submitting ? 'Salvando...' : 'Concluir cadastro'} <Icon name="check" /></button>
       </form>
       <p className="auth-switch"><Link to="/cadastro">Voltar para os dados pessoais</Link></p>
     </AuthFrame>

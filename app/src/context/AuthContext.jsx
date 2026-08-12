@@ -1,61 +1,66 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { authApi, clearSession, readSession, storeSession } from '../lib/api.js'
 import { AuthContext } from './auth-context.js'
 
-const SESSION_KEY = 'mamabloom:session'
-const DRAFT_KEY = 'mamabloom:registration-draft'
-
-function readStoredJson(key) {
-  try {
-    return JSON.parse(window.localStorage.getItem(key))
-  } catch {
-    return null
-  }
-}
-
-function readDraft() {
-  try {
-    return JSON.parse(window.sessionStorage.getItem(DRAFT_KEY))
-  } catch {
-    return null
-  }
-}
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => readStoredJson(SESSION_KEY))
+  const [session, setSession] = useState(readSession)
+  const [isLoading, setIsLoading] = useState(Boolean(session))
+  const userId = session?.user?.id
+
+  useEffect(() => {
+    if (!userId) {
+      setIsLoading(false)
+      return undefined
+    }
+
+    let active = true
+    authApi.me()
+      .then(({ user }) => {
+        if (!active) return
+        const verifiedSession = { user }
+        storeSession(verifiedSession)
+        setSession(verifiedSession)
+      })
+      .catch(() => {
+        if (!active) return
+        clearSession()
+        setSession(null)
+      })
+      .finally(() => {
+        if (active) setIsLoading(false)
+      })
+
+    return () => { active = false }
+  }, [userId])
+
+  function applySession(nextSession) {
+    storeSession(nextSession)
+    setSession(nextSession)
+    return nextSession.user
+  }
 
   const value = useMemo(
     () => ({
-      user,
-      login(identity) {
-        const session = {
-          name: identity.includes('@') ? 'Maria' : 'Mamãe',
-          identity,
-          createdAt: new Date().toISOString(),
-        }
-        window.localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-        setUser(session)
+      user: session?.user ?? null,
+      isLoading,
+      async login(identity, password) {
+        return applySession(await authApi.login(identity.trim(), password))
       },
-      saveRegistrationDraft(data) {
-        window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data))
+      async register(data) {
+        return applySession(await authApi.register(data))
       },
-      finishRegistration(pregnancyData) {
-        const draft = readDraft() ?? {}
-        const session = {
-          name: draft.name?.split(' ')[0] || 'Mamãe',
-          identity: draft.email || draft.cpf || 'cadastro-local',
-          pregnancy: pregnancyData,
-          createdAt: new Date().toISOString(),
-        }
-        window.localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-        window.sessionStorage.removeItem(DRAFT_KEY)
-        setUser(session)
+      async finishRegistration(pregnancyData) {
+        if (!session?.user) throw new Error('Sua sessão de cadastro expirou. Faça o cadastro novamente.')
+        const { user } = await authApi.updatePregnancy(pregnancyData)
+        return applySession({ user })
       },
       logout() {
-        window.localStorage.removeItem(SESSION_KEY)
-        setUser(null)
+        void authApi.logout().catch(() => undefined)
+        clearSession()
+        setSession(null)
       },
     }),
-    [user],
+    [isLoading, session],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
