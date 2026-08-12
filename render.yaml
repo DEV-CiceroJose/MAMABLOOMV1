@@ -2,9 +2,40 @@ services:
   - type: web
     runtime: static
     name: mamabloom
+    autoDeployTrigger: commit
     buildCommand: pnpm install --frozen-lockfile && pnpm run build:site
     staticPublishPath: ./site-dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://mamabloom-api.onrender.com
     routes:
       - type: rewrite
         source: /app/*
         destination: /app/index.html
+
+  - type: web
+    runtime: node
+    name: mamabloom-api
+    plan: free
+    autoDeployTrigger: commit
+    buildCommand: pnpm install --frozen-lockfile
+    startCommand: pnpm --dir api start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mamabloom-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://mamabloom.onrender.com
+
+databases:
+  - name: mamabloom-db
+    plan: free
+    databaseName: mamabloom
+    user: mamabloom_user
+    ipAllowList: []

@@ -11,11 +11,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     const nextErrors = {}
     if (!isValidIdentity(identity)) nextErrors.identity = 'Informe um e-mail ou CPF com 11 dígitos.'
@@ -23,8 +24,15 @@ export default function LoginPage() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return
 
-    login(identity.trim())
-    navigate(location.state?.from || '/inicio', { replace: true })
+    setSubmitting(true)
+    try {
+      await login(identity.trim(), password)
+      navigate(location.state?.from || '/inicio', { replace: true })
+    } catch (error) {
+      setErrors({ form: error.message })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -66,13 +74,14 @@ export default function LoginPage() {
             Esqueci minha senha
           </button>
         </div>
-        <button className="button button--primary button--wide" type="submit">
-          Entrar
+        {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
+        <button className="button button--primary button--wide" type="submit" disabled={submitting}>
+          {submitting ? 'Entrando...' : 'Entrar'}
           <Icon name="arrowRight" />
         </button>
       </form>
       <p className="auth-switch">Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link></p>
-      <p className="prototype-note">Acesso demonstrativo salvo somente neste navegador.</p>
+      <p className="prototype-note">Seus dados são protegidos e sincronizados com sua conta.</p>
     </AuthFrame>
   )
 }

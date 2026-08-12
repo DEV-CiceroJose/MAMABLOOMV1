@@ -142,6 +142,12 @@ h2 {
   transform: translateY(0);
 }
 
+.button:disabled {
+  opacity: 0.64;
+  cursor: wait;
+  transform: none;
+}
+
 .button--primary {
   color: #fff;
   background: var(--color-aqua-dark);
@@ -437,6 +443,17 @@ h2 {
   color: var(--color-danger);
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.route-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--color-aqua-dark);
+  background: var(--color-cream);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
 }
 
 .form-meta {
