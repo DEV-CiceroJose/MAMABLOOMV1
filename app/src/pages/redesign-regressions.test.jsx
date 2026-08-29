@@ -102,7 +102,7 @@ describe('regressões do redesign', () => {
   })
 
   it('mostra ausência de apoio e abre uma conversa a partir da lista', () => {
-    renderPage(<SupportPage />, '/apoio')
+    const { container } = renderPage(<SupportPage />, '/apoio')
 
     expect(screen.getByRole('heading', { name: 'Sem apoio cadastrado' })).toBeInTheDocument()
     const therapy = screen.getByRole('button', { name: /Agende uma sessão/ })
@@ -110,6 +110,8 @@ describe('regressões do redesign', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Abrir conversa com Andréia Martins' }))
     expect(screen.getByRole('heading', { name: 'Andréia Martins' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Mensagem para Andréia Martins' })).toBeInTheDocument()
+    expect(container.querySelector('.support-prototype__suggested-avatar-frame')).toBeInTheDocument()
+    expect(container.querySelector('.support-prototype__suggested-avatar > span')).toHaveAttribute('aria-hidden', 'true')
   })
 
   it('remove o plano Família e identifica Alicia como a bebê', () => {
