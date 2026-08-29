@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
@@ -8,6 +8,10 @@ import { useLocalData } from '../hooks/useLocalData.js'
 export default function PlansPage() {
   const [selectedPlan, setSelectedPlan] = useLocalData('mamabloom:selected-plan', 'essencial')
   const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    if (!plans.some((plan) => plan.id === selectedPlan)) setSelectedPlan('essencial')
+  }, [selectedPlan, setSelectedPlan])
 
   function choosePlan(plan) {
     setSelectedPlan(plan.id)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
@@ -15,8 +15,10 @@ export default function DiaryPage() {
   const [reminder, setReminder] = useLocalData('mamabloom:diary-reminder', false)
   const [mood, setMood] = useState('')
   const [text, setText] = useState('')
+  const [attachment, setAttachment] = useState(null)
   const [message, setMessage] = useState('')
   const [showComposer, setShowComposer] = useState(false)
+  const attachmentInputRef = useRef(null)
   const firstName = (user?.name || 'Maria').trim().split(/\s+/)[0]
 
   function saveEntry(event) {
@@ -25,12 +27,51 @@ export default function DiaryPage() {
       setMessage('Escolha como você está se sentindo.')
       return
     }
-    const entry = { id: createId(), mood, text: text.trim(), date: toDateKey(), createdAt: new Date().toISOString() }
+    const entry = {
+      id: createId(),
+      mood,
+      text: text.trim(),
+      image: attachment?.dataUrl ?? null,
+      imageName: attachment?.name ?? null,
+      date: toDateKey(),
+      createdAt: new Date().toISOString(),
+    }
     setEntries((current) => [entry, ...current])
     setMood('')
     setText('')
+    setAttachment(null)
+    if (attachmentInputRef.current) attachmentInputRef.current.value = ''
     setMessage('Registro salvo no seu dispositivo.')
     setShowComposer(false)
+  }
+
+  function selectAttachment(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setMessage('Escolha uma imagem JPG, PNG ou WebP.')
+      event.target.value = ''
+      return
+    }
+    if (file.size > 700 * 1024) {
+      setMessage('A imagem deve ter no máximo 700 KB para ser sincronizada com segurança.')
+      event.target.value = ''
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setAttachment({ name: file.name, dataUrl: reader.result })
+      setMessage('Imagem pronta para ser anexada ao registro.')
+    }
+    reader.onerror = () => setMessage('Não foi possível ler a imagem selecionada.')
+    reader.readAsDataURL(file)
+  }
+
+  function removeAttachment() {
+    setAttachment(null)
+    if (attachmentInputRef.current) attachmentInputRef.current.value = ''
+    setMessage('Imagem removida do registro.')
   }
 
   function deleteEntry(entryId) {
@@ -70,6 +111,17 @@ export default function DiaryPage() {
           <form onSubmit={saveEntry}>
             <label htmlFor="diary-text">Querido diário,</label>
             <textarea id="diary-text" rows="6" value={text} onChange={(event) => setText(event.target.value)} placeholder="Este é um espaço só seu..." />
+            <div className="diary-prototype__attachment">
+              <input ref={attachmentInputRef} id="diary-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={selectAttachment} />
+              <label htmlFor="diary-image"><Icon name="image" size={18} /> {attachment ? 'Trocar imagem' : 'Anexar imagem'}</label>
+              {attachment && (
+                <div className="diary-prototype__attachment-preview">
+                  <img src={attachment.dataUrl} alt="Prévia da imagem selecionada" />
+                  <span>{attachment.name}</span>
+                  <button type="button" onClick={removeAttachment} aria-label="Remover imagem"><Icon name="trash" size={15} /></button>
+                </div>
+              )}
+            </div>
             {message && <p className="form-message" role="status">{message}</p>}
             <button className="button button--primary button--wide" type="submit">Salvar no diário</button>
           </form>
@@ -78,10 +130,10 @@ export default function DiaryPage() {
             <div className="diary-prototype__preview">
               <div className="diary-prototype__preview-copy">
                 <strong>Querido diário,</strong>
-                <p>{entries[0]?.text || 'Hoje é um novo dia para acolher meus sentimentos, registrar memórias e florescer no meu próprio ritmo.'}</p>
+                <p>{entries[0]?.text || 'Este é um espaço só seu...'}</p>
                 {entries[0] && <button type="button" onClick={() => deleteEntry(entries[0].id)} aria-label="Excluir registro mais recente"><Icon name="trash" size={16} /></button>}
               </div>
-              <img src={`${import.meta.env.BASE_URL}prototype/support-mom.webp`} alt="Gestante registrando um momento da sua jornada" />
+              <img src={entries[0]?.image || `${import.meta.env.BASE_URL}prototype/home-diary.webp`} alt={entries[0]?.image ? 'Imagem anexada ao registro mais recente' : 'Caderno aberto para registrar a jornada'} />
             </div>
             <button className="diary-prototype__write" type="button" onClick={() => setShowComposer(true)}><Icon name="edit" size={19} /> Escrever um novo</button>
           </>
@@ -96,7 +148,7 @@ export default function DiaryPage() {
       {entries.length > 1 && (
         <section className="diary-prototype__history" aria-labelledby="diary-history-title">
           <h2 id="diary-history-title">Registros recentes</h2>
-          {entries.slice(1).map((entry) => <article key={entry.id}><p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
+          {entries.slice(1).map((entry) => <article key={entry.id}>{entry.image && <img src={entry.image} alt="Imagem anexada ao registro" />}<p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
         </section>
       )}
     </AppShell>

@@ -38,8 +38,10 @@ export default function BloomiePage() {
 
           <div className="bloomie-prototype__intro">
             <div className="bloomie-prototype__speech">OLÁ, EU SOU A<br />BLOOMIE!</div>
-            <img src={`${import.meta.env.BASE_URL}brand/bee-flower.webp`} alt="Bloomie, assistente virtual do MamaBloom" />
-            <p>Tire suas dúvidas sobre<br />a maternidade aqui<br />comigo!</p>
+            <div className="bloomie-prototype__character">
+              <img src={`${import.meta.env.BASE_URL}brand/bee-flower.webp`} alt="Bloomie, assistente virtual do MamaBloom" />
+              <p>Tire suas dúvidas sobre a maternidade aqui comigo!</p>
+            </div>
           </div>
 
           {messages.length > 1 && (
