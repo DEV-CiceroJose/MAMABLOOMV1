@@ -77,13 +77,6 @@ export const plans = [
     description: 'Mais acompanhamento para cada etapa.',
     features: ['Tudo do Essencial', 'Histórico completo da Bloomie', 'Relatórios ampliados', 'Conteúdos exclusivos'],
   },
-  {
-    id: 'familia',
-    name: 'Família',
-    price: 29.9,
-    description: 'Cuidado compartilhado com sua rede de apoio.',
-    features: ['Tudo do Florescer', 'Até 3 pessoas de confiança', 'Agenda compartilhada', 'Resumo para acompanhantes'],
-  },
 ]
 
 export function formatCurrency(value) {
