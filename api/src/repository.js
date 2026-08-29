@@ -1,3 +1,6 @@
+import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises'
+import { dirname } from 'node:path'
+
 function mapUser(row) {
   if (!row) return null
   return {
@@ -9,6 +12,143 @@ function mapUser(row) {
     passwordHash: row.password_hash,
     pregnancy: row.pregnancy,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+  }
+}
+
+function emptyJsonStore() {
+  return { version: 1, users: [], records: {} }
+}
+
+function validateJsonStore(data) {
+  const valid = data
+    && data.version === 1
+    && Array.isArray(data.users)
+    && data.records
+    && typeof data.records === 'object'
+    && !Array.isArray(data.records)
+
+  if (!valid) throw new Error('O arquivo de dados JSON do MamaBloom é inválido.')
+  return data
+}
+
+function clone(value) {
+  return value === undefined ? undefined : structuredClone(value)
+}
+
+export class JsonFileRepository {
+  constructor(filePath) {
+    if (!filePath) throw new Error('O caminho do arquivo JSON é obrigatório.')
+    this.filePath = filePath
+    this.data = null
+    this.initializing = null
+    this.writeQueue = Promise.resolve()
+  }
+
+  async initialize() {
+    await this.#ensureInitialized()
+    return this
+  }
+
+  async #ensureInitialized() {
+    if (this.data) return
+    if (!this.initializing) {
+      this.initializing = (async () => {
+        try {
+          const contents = await readFile(this.filePath, 'utf8')
+          this.data = validateJsonStore(JSON.parse(contents))
+        } catch (error) {
+          if (error.code !== 'ENOENT') throw error
+          this.data = emptyJsonStore()
+          await this.#persist()
+        }
+      })()
+    }
+    await this.initializing
+  }
+
+  async #persist() {
+    await mkdir(dirname(this.filePath), { recursive: true })
+    const temporaryPath = `${this.filePath}.${process.pid}.${crypto.randomUUID()}.tmp`
+    try {
+      await writeFile(temporaryPath, `${JSON.stringify(this.data, null, 2)}\n`, { mode: 0o600 })
+      await rename(temporaryPath, this.filePath)
+    } catch (error) {
+      await unlink(temporaryPath).catch(() => {})
+      throw error
+    }
+  }
+
+  async #read(operation) {
+    await this.writeQueue.catch(() => {})
+    await this.#ensureInitialized()
+    return clone(operation(this.data))
+  }
+
+  async #mutate(operation) {
+    let result
+    const queuedWrite = this.writeQueue.catch(() => {}).then(async () => {
+      await this.#ensureInitialized()
+      const previousData = clone(this.data)
+      result = operation(this.data)
+      try {
+        await this.#persist()
+      } catch (error) {
+        this.data = previousData
+        throw error
+      }
+    })
+    this.writeQueue = queuedWrite
+    await queuedWrite
+    return clone(result)
+  }
+
+  async createUser(input) {
+    return this.#mutate((data) => {
+      const now = new Date().toISOString()
+      const user = {
+        id: crypto.randomUUID(),
+        name: input.name,
+        email: input.email,
+        cpf: input.cpf,
+        birthDate: input.birthDate,
+        passwordHash: input.passwordHash,
+        pregnancy: null,
+        createdAt: now,
+        updatedAt: now,
+      }
+      data.users.push(user)
+      return user
+    })
+  }
+
+  async findUserByIdentity(identity) {
+    return this.#read((data) => data.users.find((user) => user.email === identity || user.cpf === identity) ?? null)
+  }
+
+  async findUserById(id) {
+    return this.#read((data) => data.users.find((user) => user.id === id) ?? null)
+  }
+
+  async updatePregnancy(userId, pregnancy) {
+    return this.#mutate((data) => {
+      const user = data.users.find((candidate) => candidate.id === userId)
+      if (!user) return null
+      user.pregnancy = pregnancy
+      user.updatedAt = new Date().toISOString()
+      return user
+    })
+  }
+
+  async getRecord(userId, key) {
+    return this.#read((data) => data.records[`${userId}:${key}`] ?? null)
+  }
+
+  async setRecord(userId, key, value) {
+    return this.#mutate((data) => {
+      const record = { key, value, updatedAt: new Date().toISOString() }
+      data.records[`${userId}:${key}`] = record
+      return record
+    })
   }
 }
 
