@@ -122,7 +122,7 @@ export default function SupportPage() {
 
       <section className="support-prototype__suggested" aria-labelledby="suggested-title">
         <h2 id="suggested-title">Perfis sugeridos para você:</h2>
-        <div>{suggestedProfiles.map((profile) => <article key={profile.name}><div><img src={`${import.meta.env.BASE_URL}prototype/${profile.image}`} alt={`Perfil de ${profile.name}`} /><span>+</span></div><strong>{profile.name}</strong></article>)}</div>
+        <div>{suggestedProfiles.map((profile) => <article key={profile.name}><div className="support-prototype__suggested-avatar"><div className="support-prototype__suggested-avatar-frame"><img src={`${import.meta.env.BASE_URL}prototype/${profile.image}`} alt={`Perfil de ${profile.name}`} /></div><span aria-hidden="true">+</span></div><strong>{profile.name}</strong></article>)}</div>
       </section>
 
       <section className="support-prototype__tools" aria-labelledby="support-tools-title">
