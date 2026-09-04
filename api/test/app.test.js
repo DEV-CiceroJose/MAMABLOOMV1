@@ -139,3 +139,55 @@ test('bloqueia chaves de armazenamento não reconhecidas', async () => {
   assert.equal(response.status, 422)
   assert.equal(response.body.error.code, 'INVALID_DATA_KEY')
 })
+
+test('salva contatos de confiança separados da emergência e de outras contas', async () => {
+  const app = createTestApp()
+  const client = request.agent(app)
+  const other = request.agent(app)
+  await register(client)
+  await register(other, { email: 'outra@example.com', cpf: '98765432100' })
+  const value = [{ id: 'ana', name: 'Ana', phone: '85999991234', relationship: 'Amigo(a)' }]
+  assert.equal((await client.put('/v1/data/mamabloom:trusted-contacts').send({ value })).status, 200)
+  assert.deepEqual((await client.get('/v1/data/mamabloom:trusted-contacts')).body.value, value)
+  assert.equal((await client.get('/v1/data/mamabloom:emergency-card')).status, 404)
+  assert.equal((await other.get('/v1/data/mamabloom:trusted-contacts')).status, 404)
+  assert.equal((await client.put('/v1/data/mamabloom:trusted-contacts').send({ value: [{ ...value[0], phone: '123' }] })).status, 422)
+})
+
+test('edita os dados pessoais da própria conta e preserva credenciais e gestação', async () => {
+  const app = createTestApp()
+  const client = request.agent(app)
+  await register(client)
+  await client.put('/v1/auth/pregnancy').send({ lastPeriod: '2026-05-01', weeks: 14 })
+  const changes = { name: 'Ana Santos', email: 'nova@example.com', birthDate: '1999-01-15' }
+  const response = await client.put('/v1/auth/profile').send({ ...changes, passwordHash: 'forjado', id: 'outra-conta' })
+  assert.equal(response.status, 200)
+  const current = (await client.get('/v1/auth/me')).body.user
+  assert.equal(current.name, changes.name)
+  assert.equal(current.email, changes.email)
+  assert.equal(current.birthDate, changes.birthDate)
+  assert.deepEqual(current.pregnancy, { lastPeriod: '2026-05-01', weeks: 14 })
+  assert.equal((await request(app).post('/v1/auth/login').send({ identity: changes.email, password: validRegistration.password })).status, 200)
+  assert.equal((await request(app).put('/v1/auth/profile').send(changes)).status, 401)
+  assert.equal((await client.put('/v1/auth/profile').send({ ...changes, birthDate: '2025-01-01' })).status, 422)
+  const other = request.agent(app)
+  await register(other, { email: 'outra@example.com', cpf: '98765432100' })
+  assert.equal((await client.put('/v1/auth/profile').send({ ...changes, email: 'outra@example.com' })).status, 409)
+})
+
+test('salva o nome do bebê separado do nome da mãe e permite atualizar uma conta existente', async () => {
+  const client = request.agent(createTestApp())
+  await register(client)
+  const gestation = await client.put('/v1/auth/pregnancy').send({ lastPeriod: '2026-05-01', weeks: 14, babyName: ' Luna ' })
+  assert.equal(gestation.status, 200)
+  assert.equal(gestation.body.user.pregnancy.babyName, 'Luna')
+  assert.equal(gestation.body.user.name, validRegistration.name)
+  const profile = { name: validRegistration.name, email: validRegistration.email, birthDate: validRegistration.birthDate }
+  await client.put('/v1/auth/profile').send({ ...profile, babyName: 'Alice' })
+  await client.put('/v1/auth/pregnancy').send({ lastPeriod: '2026-05-01', weeks: 15 })
+  const current = (await client.get('/v1/auth/me')).body.user
+  assert.equal(current.pregnancy.babyName, 'Alice')
+  assert.equal(current.pregnancy.weeks, 15)
+  assert.equal(current.name, validRegistration.name)
+  assert.equal((await client.put('/v1/auth/profile').send({ ...profile, babyName: 'x'.repeat(81) })).status, 422)
+})

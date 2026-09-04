@@ -17,7 +17,7 @@ export default function ReportsPage() {
   const totalMoods = Math.max(entries.length, 1)
 
   return (
-    <AppShell className="wellness-prototype reports-prototype" header={({ openMenu }) => <header className="wellness-prototype__header"><button type="button" onClick={() => window.print()} aria-label="Imprimir relatório"><Icon name="chart" /></button><h1>Relatório gestacional</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
+    <AppShell className="wellness-prototype reports-prototype" header={({ openMenu }) => <header className="wellness-prototype__header"><h1>Relatório gestacional</h1><button type="button" onClick={() => window.print()} aria-label="Imprimir relatório"><Icon name="chart" /></button><PrototypeToolbar onMenu={openMenu} /></header>}>
 
       <section className="report-hero">
         <div><p className="eyebrow eyebrow--light">Resumo atual</p><h2>{user?.name}, você está na {user?.pregnancy?.weeks ?? 21}ª semana</h2><p>Um panorama dos registros feitos neste dispositivo.</p></div>

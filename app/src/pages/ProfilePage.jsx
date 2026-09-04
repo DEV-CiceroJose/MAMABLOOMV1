@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
+import ProfileEditor from '../components/ProfileEditor.jsx'
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 
@@ -9,6 +10,8 @@ export default function ProfilePage() {
   const { logout, user } = useAuth()
   const navigate = useNavigate()
   const [shareMessage, setShareMessage] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [profileMessage, setProfileMessage] = useState('')
   const weeks = user?.pregnancy?.weeks ?? 21
   const fullName = user?.name || 'Maria da Silva'
 
@@ -45,12 +48,14 @@ export default function ProfilePage() {
       </section>
 
       <section className="profile-prototype__links" aria-label="Dados e cuidados">
-        <Link to="/saude"><span><Icon name="baby" /></span><strong>Gestação em acompanhamento, {weeks} semanas</strong></Link>
+        <div className="profile-prototype__pregnancy"><span><Icon name="baby" /></span><strong>Gestação em acompanhamento, {weeks} semanas</strong></div>
         <Link to="/emergencia"><span><Icon name="shield" /></span><strong>Cartão de emergência</strong></Link>
         <Link to="/agenda"><span><Icon name="calendar" /></span><strong>Minha Agenda</strong></Link>
-        <Link to="/saude"><span><Icon name="edit" /></span><strong>Editar informações</strong></Link>
+        <button type="button" onClick={() => { setEditing(true); setProfileMessage('') }} aria-expanded={editing}><span><Icon name="edit" /></span><strong>Editar informações</strong></button>
         <button type="button" onClick={shareProfile}><span><Icon name="share" /></span><strong>Compartilhar perfil</strong></button>
       </section>
+      {editing && <ProfileEditor onClose={() => setEditing(false)} onSaved={() => { setEditing(false); setProfileMessage('Informações atualizadas na sua conta.') }} />}
+      {profileMessage && <p className="form-message" role="status">{profileMessage}</p>}
       {shareMessage && <p className="profile-prototype__message" role="status">{shareMessage}</p>}
       <aside className="profile-privacy"><Icon name="lock" /><div><strong>Privacidade e sincronização</strong><p>Seus registros ficam disponíveis neste dispositivo e são sincronizados com segurança na sua conta MamaBloom quando há conexão.</p></div></aside>
       <button className="profile-prototype__leave" type="button" onClick={leaveAccount}><Icon name="signOut" size={19} /> Deixar essa conta</button>

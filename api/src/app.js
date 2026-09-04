@@ -19,6 +19,7 @@ const allowedDataKeys = new Set([
   'mamabloom:selected-plan',
   'mamabloom:shop-favorites',
   'mamabloom:support-favorites',
+  'mamabloom:trusted-contacts',
 ])
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/
@@ -56,6 +57,7 @@ const loginSchema = z.object({
 })
 
 const pregnancySchema = z.object({
+  babyName: z.string().trim().max(80).optional(),
   lastPeriod: z.string().refine(isValidDate, 'Data da última menstruação inválida.'),
   weeks: z.number().int().min(0).max(42),
 }).refine((data) => new Date(`${data.lastPeriod}T00:00:00Z`) <= new Date(), {
@@ -64,6 +66,15 @@ const pregnancySchema = z.object({
 })
 
 const dataSchema = z.object({ value: z.json() })
+const profileSchema = z.object({ name: registrationSchema.shape.name, email: registrationSchema.shape.email, birthDate: registrationSchema.shape.birthDate, babyName: z.string().trim().max(80).optional() }).refine((data) => ageOnDate(data.birthDate) >= 16, {
+  path: ['birthDate'], message: 'O MamaBloom é destinado a pessoas com 16 anos ou mais.',
+})
+const contactsSchema = z.object({ value: z.array(z.object({
+  id: z.string().min(1).max(100),
+  name: z.string().trim().min(1).max(120),
+  phone: z.string().regex(/^\+?\d{10,15}$/),
+  relationship: z.enum(['Amigo(a)', 'Familiar', 'Parceiro(a)', 'Vizinho(a)', 'Outro']),
+})).max(100) })
 
 function normalizeIdentity(identity) {
   return identity.includes('@') ? identity.toLowerCase() : identity.replace(/\D/g, '')
@@ -193,6 +204,19 @@ export function createApp({ repository, config }) {
 
   app.get('/v1/auth/me', authenticate, (req, res) => res.json({ user: publicUser(req.user) }))
 
+  app.put('/v1/auth/profile', authenticate, async (req, res, next) => {
+    const parsed = profileSchema.safeParse(req.body)
+    if (!parsed.success) return res.status(422).json(errorBody('VALIDATION_ERROR', 'Confira seus dados pessoais.', validationFields(parsed.error)))
+    try {
+      const existing = await repository.findUserByIdentity(parsed.data.email)
+      if (existing && existing.id !== req.user.id) return res.status(409).json(errorBody('ACCOUNT_EXISTS', 'Já existe uma conta com este e-mail.'))
+      const { babyName, ...profile } = parsed.data
+      if (babyName !== undefined) profile.pregnancy = { ...req.user.pregnancy, babyName }
+      const user = await repository.updateProfile(req.user.id, profile)
+      return res.json({ user: publicUser(user) })
+    } catch (error) { return next(error) }
+  })
+
   app.post('/v1/auth/logout', (_req, res) => {
     res.clearCookie(config.sessionCookieName || 'mamabloom_session', {
       httpOnly: true,
@@ -210,7 +234,7 @@ export function createApp({ repository, config }) {
     }
 
     try {
-      const user = await repository.updatePregnancy(req.user.id, parsed.data)
+      const user = await repository.updatePregnancy(req.user.id, { ...req.user.pregnancy, ...parsed.data })
       return res.json({ user: publicUser(user) })
     } catch (error) {
       return next(error)
@@ -235,7 +259,7 @@ export function createApp({ repository, config }) {
     if (!allowedDataKeys.has(req.params.key)) {
       return res.status(422).json(errorBody('INVALID_DATA_KEY', 'Módulo de dados não reconhecido.'))
     }
-    const parsed = dataSchema.safeParse(req.body)
+    const parsed = (req.params.key === 'mamabloom:trusted-contacts' ? contactsSchema : dataSchema).safeParse(req.body)
     if (!parsed.success) {
       return res.status(422).json(errorBody('VALIDATION_ERROR', 'O valor enviado não é um JSON válido.'))
     }

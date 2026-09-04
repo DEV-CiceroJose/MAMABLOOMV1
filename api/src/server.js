@@ -12,8 +12,9 @@ if (config.dataStore === 'postgres') {
   pool = new pg.Pool({
     connectionString: config.databaseUrl,
     ssl: config.databaseSsl ? { rejectUnauthorized: false } : undefined,
+    options: `-c search_path=${config.databaseSchema}`,
   })
-  await migrate(pool)
+  await migrate(pool, config.databaseSchema)
   repository = new PostgresRepository(pool)
 } else {
   repository = await new JsonFileRepository(config.dataFilePath).initialize()

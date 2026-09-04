@@ -24,6 +24,12 @@ export class MemoryRepository {
     return user
   }
 
+  async updateProfile(userId, profile) {
+    const user = await this.findUserById(userId)
+    Object.assign(user, profile)
+    return user
+  }
+
   async getRecord(userId, key) {
     return this.records.get(`${userId}:${key}`) ?? null
   }

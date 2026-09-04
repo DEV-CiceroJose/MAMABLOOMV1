@@ -70,6 +70,9 @@ export const authApi = {
   updatePregnancy(data) {
     return request('/v1/auth/pregnancy', { method: 'PUT', body: data })
   },
+  updateProfile(data) {
+    return request('/v1/auth/profile', { method: 'PUT', body: data })
+  },
   logout() {
     return request('/v1/auth/logout', { method: 'POST' })
   },

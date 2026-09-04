@@ -12,6 +12,10 @@ export function loadConfig() {
   if (!['json', 'postgres'].includes(dataStore)) {
     throw new Error('DATA_STORE deve ser "json" ou "postgres".')
   }
+  const databaseSchema = process.env.DATABASE_SCHEMA || 'public'
+  if (!/^[a-z][a-z0-9_]{0,62}$/.test(databaseSchema)) {
+    throw new Error('DATABASE_SCHEMA deve ser um identificador PostgreSQL válido.')
+  }
 
   return {
     port: Number(process.env.PORT || 3001),
@@ -19,6 +23,7 @@ export function loadConfig() {
     dataFilePath: process.env.DATA_FILE_PATH || './data/mamabloom.json',
     databaseUrl: dataStore === 'postgres' ? required('DATABASE_URL') : (process.env.DATABASE_URL || ''),
     databaseSsl: process.env.DATABASE_SSL === 'true',
+    databaseSchema,
     jwtSecret,
     secureCookies: process.env.NODE_ENV === 'production',
     sessionCookieName: process.env.SESSION_COOKIE_NAME || 'mamabloom_session',

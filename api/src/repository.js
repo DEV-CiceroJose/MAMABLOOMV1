@@ -139,6 +139,22 @@ export class JsonFileRepository {
     })
   }
 
+  async updateProfile(userId, profile) {
+    return this.#mutate((data) => {
+      const user = data.users.find((candidate) => candidate.id === userId)
+      if (!user) return null
+      if (data.users.some((candidate) => candidate.id !== userId && candidate.email === profile.email)) {
+        throw Object.assign(new Error('E-mail já cadastrado.'), { code: '23505' })
+      }
+      user.name = profile.name
+      user.email = profile.email
+      user.birthDate = profile.birthDate
+      if (profile.pregnancy !== undefined) user.pregnancy = profile.pregnancy
+      user.updatedAt = new Date().toISOString()
+      return user
+    })
+  }
+
   async getRecord(userId, key) {
     return this.#read((data) => data.records[`${userId}:${key}`] ?? null)
   }
@@ -177,6 +193,18 @@ export class PostgresRepository {
 
   async findUserById(id) {
     const { rows } = await this.pool.query('SELECT * FROM users WHERE id = $1 LIMIT 1', [id])
+    return mapUser(rows[0])
+  }
+
+  async updateProfile(userId, profile) {
+    const values = [userId, profile.name, profile.email, profile.birthDate]
+    const pregnancyUpdate = profile.pregnancy === undefined ? '' : ', pregnancy = $5::jsonb'
+    if (profile.pregnancy !== undefined) values.push(JSON.stringify(profile.pregnancy))
+    const { rows } = await this.pool.query(
+      `UPDATE users SET name = $2, email = $3, birth_date = $4, updated_at = NOW()${pregnancyUpdate}
+       WHERE id = $1 RETURNING *`,
+      values,
+    )
     return mapUser(rows[0])
   }
 
