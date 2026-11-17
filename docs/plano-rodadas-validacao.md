@@ -29,8 +29,16 @@ O JavaScript público contém as mensagens e títulos:
 - Perfis sugeridos para você:
 - Escolha o cuidado que combina com você.
 
-Esses marcadores também existem no código local. Isso confirma a presença dessas funcionalidades/textos na publicação, mas NÃO prova que o deploy inteiro corresponde ao commit da main.
-A integração Render não estava instalada/conectada durante a consulta; a confirmação do commit e da branch efetivamente publicados está pendente. O render.yaml possui deploy automático por commit; conferir a branch monitorada no painel antes de qualquer publicação.
+Após conectar a integração e obter confirmação do usuário para o workspace test-devs (tea-d8kronvavr4c73emniog), os serviços e deploys foram consultados em modo de leitura em 17/11/2026:
+
+| Serviço | ID | Branch acompanhada | Deploy live | Commit publicado |
+| --- | --- | --- | --- | --- |
+| mamabloom | srv-d9r0j4jm8hqs73b8c5m0 | main | dep-dad9ds5g1s2s73fjspb0 | e69cdf2bb765364e4f5ad639ee73e1de186049e1 |
+| mamabloom-api | srv-da9cd5lg1s2s739vlrq0 | main | dep-dahva9jm8hqs73dh8gng | e69cdf2bb765364e4f5ad639ee73e1de186049e1 |
+
+Resultado: frontend e API estão publicados no mesmo commit que a main remota usada como base desta branch. O deploy do frontend terminou em 04/09/2026 às 07:01 (America/Sao_Paulo); o da API terminou em 11/09/2026 às 09:34. Ambos aparecem como live; isso identifica a revisão publicada, mas não substitui testes funcionais.
+Os dois serviços estão configurados para deploy automático por commit na main. A nova branch de validação não é a branch acompanhada por esses serviços.
+Nenhum deploy foi disparado ou configuração alterada.
 Não houve autenticação em contas de produção nem alteração de dados publicados. Não foi feita comparação visual autenticada.
 
 ## Rodada 1: planos
