@@ -1,0 +1,39 @@
+.diary-reader { background: var(--proto-cream); }
+.diary-reader__header { min-height: 112px; padding: 20px; border-radius: 0 0 34px 34px; display: grid; grid-template-columns: 42px minmax(0, 1fr) 92px; gap: 10px; align-items: center; background: var(--proto-yellow-soft); }
+.diary-reader__header > a { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #287780; background: #fff; }
+.diary-reader__header h1 { margin: 0; color: #287780; font-size: 1.65rem; line-height: 1.1; }
+.diary-reader__header h1:focus { outline: none; }
+.diary-reader__header .prototype-toolbar { grid-template-columns: 0 38px 38px; }
+.diary-reader .app-content { gap: 20px; padding: 24px 18px 120px; }
+.diary-reader__index { display: grid; gap: 8px; font-size: 0.8rem; font-weight: 800; color: #287780; }
+.diary-reader__index select { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid #dbceac; border-radius: 12px; color: #5c5141; background: #fffdf5; }
+.diary-book { border: 7px solid #91c3c2; border-radius: 18px; background: #fffcf2; box-shadow: 0 6px 0 #639b9d, 0 12px 20px rgb(67 75 61 / 16%); overflow: hidden; }
+.diary-book__photo-page { position: relative; padding: 22px 22px 15px; background: radial-gradient(circle at 10% 20%, #f7e9c9 0 2px, transparent 3px) 0 0 / 18px 18px, #fff9e9; }
+.diary-book__caption { margin: 0 0 15px; color: #8a7460; text-align: center; font-size: 0.75rem; }
+.diary-book__photo-page figure { margin: 0 auto; padding: 9px 9px 20px; max-width: 300px; background: white; box-shadow: 0 3px 10px #776f5533; transform: rotate(-2deg); }
+.diary-book__photo-page img { display: block; width: 100%; max-height: 300px; object-fit: contain; }
+.diary-book__flower { position: absolute; bottom: 4px; right: 8px; color: #d8ad58; font-size: 2.5rem; }
+.diary-book__keepsake { min-height: 100px; display: grid; justify-items: center; align-content: center; gap: 12px; color: #8cbaba; }
+.diary-book__keepsake p { margin: 0; color: #8a7460; font: italic 1.1rem Georgia, serif; }
+.diary-book__writing-page { position: relative; min-height: 285px; padding: 24px 22px 44px; border-top: 2px dashed #c0cbc0; background: repeating-linear-gradient(transparent 0 31px, #c3d6d447 31px 32px), #fffdf5; }
+.diary-book__writing-page time { display: block; margin-bottom: 10px; color: #8a7460; font-size: 0.75rem; }
+.diary-book__mood { display: inline-block; padding: 3px 9px; border-radius: 12px; color: #5d7769; background: #e5f1e9; font-size: 0.75rem; }
+.diary-book__writing-page h2 { margin: 16px 0; font: italic 1.6rem Georgia, serif; color: #675342; }
+.diary-book__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 1.05rem/2 Georgia, serif; color: #504739; }
+.diary-book__page-number { position: absolute; right: 22px; bottom: 14px; font: italic 0.9rem Georgia, serif; color: #9c8e70; }
+.diary-reader__pagination { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 6px; }
+.diary-reader__pagination button { min-height: 44px; padding: 8px; border: 0; border-radius: 16px; display: flex; gap: 4px; align-items: center; justify-content: center; color: #287780; background: var(--proto-aqua-soft); font-size: 0.75rem; font-weight: 800; }
+.diary-reader__pagination button:disabled { opacity: 0.4; cursor: default; }
+.diary-reader__pagination p { margin: 0; font-size: 0.7rem; color: #746852; }
+.diary-reader__new { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; color: #287780; font-size: 0.85rem; }
+.diary-reader__empty { padding: 30px 12px; text-align: center; }
+.diary-reader__empty img { width: 200px; }
+.diary-reader__empty h2 { margin: 24px 0 12px; color: #287780; }
+.diary-reader__empty .button { white-space: normal; }
+@media (min-width: 700px) {
+  .app-screen.diary-reader { max-width: 860px; }
+  .diary-reader .app-content { padding-inline: 32px; }
+  .diary-book { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .diary-book__photo-page { padding-top: 42px; }
+  .diary-book__writing-page { min-height: 440px; border-top: 0; border-left: 2px dashed #c0cbc0; padding-top: 36px; }
+}

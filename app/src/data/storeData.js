@@ -77,6 +77,13 @@ export const plans = [
     description: 'Mais acompanhamento para cada etapa.',
     features: ['Tudo do Essencial', 'Histórico completo da Bloomie', 'Relatórios ampliados', 'Conteúdos exclusivos'],
   },
+  {
+    id: 'acolher',
+    name: 'Acolher',
+    price: null,
+    description: 'Uma rede de cuidado para acompanhar você de perto.',
+    features: ['Tudo do Essencial e do Florescer', 'Psicólogos parceiros'],
+  },
 ]
 
 export function formatCurrency(value) {

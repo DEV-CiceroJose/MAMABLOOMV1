@@ -15,12 +15,13 @@ function calculateWeeks(value) {
 }
 
 export default function PregnancyStepPage() {
+  const { finishRegistration, user } = useAuth()
+  const [babyName, setBabyName] = useState(user?.pregnancy?.babyName || '')
   const [lastPeriod, setLastPeriod] = useState('')
   const [error, setError] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const weeks = useMemo(() => calculateWeeks(lastPeriod), [lastPeriod])
-  const { finishRegistration } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(event) {
@@ -32,7 +33,7 @@ export default function PregnancyStepPage() {
     setSubmitting(true)
     setSubmitError('')
     try {
-      await finishRegistration({ lastPeriod, weeks })
+      await finishRegistration({ lastPeriod, weeks, babyName: babyName.trim() })
       navigate('/inicio', { replace: true })
     } catch (submissionError) {
       setSubmitError(submissionError.message)
@@ -44,6 +45,8 @@ export default function PregnancyStepPage() {
   return (
     <AuthFrame title="Sua gestação" subtitle="Conte em que momento dessa jornada você está." step="Etapa 2 de 2" illustration="baby">
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <FormField id="babyName" label="Nome do bebê" icon="baby" maxLength={80} value={babyName} onChange={(event) => setBabyName(event.target.value)} placeholder="Como seu bebê vai se chamar?" aria-describedby="baby-name-help" />
+        <p id="baby-name-help" className="form-helper">Ainda não escolheu? Você pode preencher depois no seu perfil.</p>
         <FormField
           id="lastPeriod"
           label="Primeiro dia da última menstruação"

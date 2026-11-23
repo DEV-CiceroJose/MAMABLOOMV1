@@ -37,7 +37,7 @@ export default function BloomiePage() {
           <PrototypeToolbar onMenu={openMenu} />
 
           <div className="bloomie-prototype__intro">
-            <div className="bloomie-prototype__speech">OLÁ, EU SOU A<br />BLOOMIE!</div>
+            <div className="bloomie-prototype__speech" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}prototype/bloomie-speech.png)` }}><span>OLÁ, EU SOU A<br />BLOOMIE!</span></div>
             <div className="bloomie-prototype__character">
               <img src={`${import.meta.env.BASE_URL}brand/bee-flower.webp`} alt="Bloomie, assistente virtual do MamaBloom" />
               <p>Tire suas dúvidas sobre a maternidade aqui comigo!</p>

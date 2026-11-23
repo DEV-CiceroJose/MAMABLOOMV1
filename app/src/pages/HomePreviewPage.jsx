@@ -18,7 +18,7 @@ export default function HomePreviewPage() {
   const { user } = useAuth()
   const weeks = user?.pregnancy?.weeks ?? 21
   const month = Math.min(9, Math.max(1, Math.ceil(weeks / 4)))
-  const firstName = (user?.name || 'Maria').trim().split(/\s+/)[0].toLocaleUpperCase('pt-BR')
+  const babyName = user?.pregnancy?.babyName?.trim() || 'Meu bebê'
   const prototypeAsset = (name) => `${import.meta.env.BASE_URL}prototype/${name}`
 
   return (
@@ -29,12 +29,12 @@ export default function HomePreviewPage() {
           <PrototypeToolbar className="home-prototype__toolbar" search onMenu={openMenu} />
           <div className="home-prototype__journey">
             <div>
-              <h1 id="home-greeting">{firstName}</h1>
+              <h1 id="home-greeting">{babyName.toLocaleUpperCase('pt-BR')}</h1>
               <p className="home-prototype__weeks"><strong>{weeks} Semanas</strong><span>{month}º mês de gestação</span></p>
             </div>
             <figure className="home-prototype__baby">
-              <img src={prototypeAsset('home-pregnancy.webp')} alt="Ilustração do desenvolvimento de Alicia" />
-              <figcaption>Alicia</figcaption>
+              <span className="home-prototype__baby-art"><img src={prototypeAsset('pregnancy-improved.png')} alt={`Ilustração do desenvolvimento de ${babyName}`} /></span>
+              <figcaption>{babyName}</figcaption>
             </figure>
           </div>
         </section>

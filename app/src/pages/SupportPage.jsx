@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
@@ -17,19 +17,21 @@ const conversations = [
 ]
 
 const suggestedProfiles = [
-  { name: 'Beca Correia', image: 'support-mom.webp' },
-  { name: 'Andréia Martins', image: 'support-therapy.webp' },
-  { name: 'Ana Beatriz', image: 'store-promo.webp' },
+  { id: 'beca', name: 'Beca Correia', image: 'support-mom.webp' },
+  { id: 'andreia', name: 'Andréia Martins', image: 'support-therapy.webp' },
+  { id: 'ana', name: 'Ana Beatriz', image: 'store-promo.webp' },
 ]
 
 export default function SupportPage() {
   const [favorites, setFavorites] = useLocalData('mamabloom:support-favorites', [])
-  const [emergencyCard] = useLocalData('mamabloom:emergency-card', {})
+  const [contacts] = useLocalData('mamabloom:trusted-contacts', [])
   const [seconds, setSeconds] = useState(60)
   const [breathing, setBreathing] = useState(false)
   const [status, setStatus] = useState('')
   const [activeConversation, setActiveConversation] = useState(null)
   const [draft, setDraft] = useState('')
+  const suggestionsRef = useRef(null)
+  const chatInputRef = useRef(null)
   const [chatMessages, setChatMessages] = useState(() => Object.fromEntries(
     conversations.map((conversation) => [conversation.id, [{ id: `${conversation.id}-initial`, sender: 'contact', text: conversation.text }]]),
   ))
@@ -51,9 +53,14 @@ export default function SupportPage() {
   }
 
   function openConversation(conversation) {
+    setChatMessages((current) => current[conversation.id] ? current : { ...current, [conversation.id]: [] })
     setActiveConversation(conversation)
     setDraft('')
   }
+
+  useEffect(() => {
+    if (activeConversation) chatInputRef.current?.focus()
+  }, [activeConversation])
 
   function sendChatMessage(event) {
     event.preventDefault()
@@ -76,13 +83,13 @@ export default function SupportPage() {
         </header>
       )}
     >
-      <section className={emergencyCard.contactPhone ? 'support-prototype__empty-state has-support' : 'support-prototype__empty-state'} aria-live="polite">
+      <section className={contacts.length ? 'support-prototype__empty-state has-support' : 'support-prototype__empty-state'} aria-live="polite">
         <span><Icon name="users" size={28} /></span>
         <div>
-          <h2>{emergencyCard.contactPhone ? 'Sua rede de apoio' : 'Sem apoio cadastrado'}</h2>
-          <p>{emergencyCard.contactPhone ? `${emergencyCard.contactName || 'Contato de confiança'} está disponível no seu cartão de emergência.` : 'Você ainda não adicionou uma pessoa de confiança para acompanhar esta jornada.'}</p>
+          <h2>{contacts.length ? 'Sua rede de apoio' : 'Sem apoio cadastrado'}</h2>
+          <p>{contacts.length ? `${contacts.length} ${contacts.length === 1 ? 'pessoa de confiança cadastrada' : 'pessoas de confiança cadastradas'}.` : 'Adicione amigos e familiares para acompanhar esta jornada.'}</p>
         </div>
-        <Link to="/emergencia">{emergencyCard.contactPhone ? 'Ver contato' : 'Adicionar apoio'}</Link>
+        <Link to="/apoio/contatos">{contacts.length ? 'Ver contatos' : 'Adicionar apoio'}</Link>
       </section>
 
       <button className="support-prototype__therapy" type="button" onClick={() => setStatus('O agendamento será conectado aos profissionais na etapa do backend.') }>
@@ -103,7 +110,7 @@ export default function SupportPage() {
           </div>
           <form onSubmit={sendChatMessage}>
             <label className="sr-only" htmlFor="support-chat-message">Mensagem para {activeConversation.name}</label>
-            <input id="support-chat-message" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Digite uma mensagem" />
+            <input ref={chatInputRef} id="support-chat-message" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Digite uma mensagem" />
             <button type="submit" aria-label="Enviar mensagem"><Icon name="send" size={18} /></button>
           </form>
         </section>
@@ -133,7 +140,7 @@ export default function SupportPage() {
 
       <section className="support-network">
         <div><p className="eyebrow">Sua rede</p><h2>Contato de confiança</h2></div>
-        {emergencyCard.contactPhone ? <a href={`tel:${emergencyCard.contactPhone}`}><span><Icon name="phone" /></span><div><strong>{emergencyCard.contactName || 'Contato de confiança'}</strong><small>{emergencyCard.contactPhone}</small></div><Icon name="chevronRight" size={18} /></a> : <Link to="/emergencia"><span><Icon name="users" /></span><div><strong>Adicionar apoio</strong><small>Cadastre uma pessoa de confiança</small></div><Icon name="chevronRight" size={18} /></Link>}
+        <Link to="/apoio/contatos"><span><Icon name="users" /></span><div><strong>{contacts.length ? 'Gerenciar contatos' : 'Adicionar apoio'}</strong><small>{contacts.length ? 'Veja amigos e familiares da sua rede' : 'Cadastre uma pessoa de confiança'}</small></div><Icon name="chevronRight" size={18} /></Link>
       </section>
     </AppShell>
   )

@@ -49,6 +49,9 @@ export function AuthProvider({ children }) {
       async register(data) {
         return applySession(await authApi.register(data))
       },
+      async updateProfile(data) {
+        return applySession(await authApi.updateProfile(data))
+      },
       async finishRegistration(pregnancyData) {
         if (!session?.user) throw new Error('Sua sessão de cadastro expirou. Faça o cadastro novamente.')
         const { user } = await authApi.updatePregnancy(pregnancyData)

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
@@ -10,6 +11,7 @@ import { formatLongDate, toDateKey } from '../lib/date.js'
 const createId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
 
 export default function DiaryPage() {
+  const [params, setParams] = useSearchParams()
   const { user } = useAuth()
   const [entries, setEntries] = useLocalData('mamabloom:diary', [])
   const [reminder, setReminder] = useLocalData('mamabloom:diary-reminder', false)
@@ -17,7 +19,7 @@ export default function DiaryPage() {
   const [text, setText] = useState('')
   const [attachment, setAttachment] = useState(null)
   const [message, setMessage] = useState('')
-  const [showComposer, setShowComposer] = useState(false)
+  const [showComposer, setShowComposer] = useState(params.get('escrever') === '1')
   const attachmentInputRef = useRef(null)
   const firstName = (user?.name || 'Maria').trim().split(/\s+/)[0]
 
@@ -43,6 +45,7 @@ export default function DiaryPage() {
     if (attachmentInputRef.current) attachmentInputRef.current.value = ''
     setMessage('Registro salvo no seu dispositivo.')
     setShowComposer(false)
+    setParams({}, { replace: true })
   }
 
   function selectAttachment(event) {
@@ -87,7 +90,7 @@ export default function DiaryPage() {
           <PrototypeToolbar onMenu={openMenu} />
           <div>
             <h1>Bom dia,<br />{firstName} <span aria-hidden="true">🌸</span></h1>
-            <img src={`${import.meta.env.BASE_URL}brand/bee-baby.webp`} alt="" />
+            <Link className="diary-prototype__support-link" to="/apoio" aria-label="Ir para a Central de apoio"><img src={`${import.meta.env.BASE_URL}brand/bee-baby.webp`} alt="" /></Link>
           </div>
           <p>Como você está se sentindo hoje?</p>
         </header>
@@ -133,22 +136,28 @@ export default function DiaryPage() {
                 <p>{entries[0]?.text || 'Este é um espaço só seu...'}</p>
                 {entries[0] && <button type="button" onClick={() => deleteEntry(entries[0].id)} aria-label="Excluir registro mais recente"><Icon name="trash" size={16} /></button>}
               </div>
-              <img src={entries[0]?.image || `${import.meta.env.BASE_URL}prototype/home-diary.webp`} alt={entries[0]?.image ? 'Imagem anexada ao registro mais recente' : 'Caderno aberto para registrar a jornada'} />
+              <Link className="diary-prototype__open-book" to="/diario/memorias" aria-label="Abrir meu diário"><img className="diary-prototype__illustration" src={`${import.meta.env.BASE_URL}prototype/home-diary.webp`} alt="" /><span>Abrir meu diário</span></Link>
             </div>
             <button className="diary-prototype__write" type="button" onClick={() => setShowComposer(true)}><Icon name="edit" size={19} /> Escrever um novo</button>
           </>
         )}
       </section>
 
+      {message && !showComposer && <p className="form-message" role="status">{message}</p>}
+
       <label className="diary-prototype__reminder">
         <span><Icon name="bell" size={20} /><span><strong>Me lembre</strong><small>Dia de reflexão<br />Todo dia, às 9:00 PM</small></span></span>
         <input type="checkbox" checked={reminder} onChange={(event) => setReminder(event.target.checked)} />
       </label>
 
-      {entries.length > 1 && (
+      {entries.length > 0 && (
         <section className="diary-prototype__history" aria-labelledby="diary-history-title">
-          <h2 id="diary-history-title">Registros recentes</h2>
-          {entries.slice(1).map((entry) => <article key={entry.id}>{entry.image && <img src={entry.image} alt="Imagem anexada ao registro" />}<p>{entry.text || 'Um momento registrado sem anotações.'}</p><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
+          <h2 id="diary-history-title">Suas memórias</h2>
+          <p>Relembre os momentos que você guardou.</p>
+          {entries.map((entry) => <article key={entry.id}><Link to={`/diario/memorias?registro=${encodeURIComponent(entry.id)}`} aria-label={`Relembrar registro de ${formatLongDate(entry.date)}`}>
+            {entry.image ? <img src={entry.image} alt="Foto da memória" /> : <span className="diary-prototype__memory-icon"><Icon name="book" /></span>}
+            <div><time dateTime={entry.date}>{formatLongDate(entry.date)}</time><p>{entry.text || 'Um momento registrado sem anotações.'}</p></div>
+          </Link><button type="button" onClick={() => deleteEntry(entry.id)} aria-label="Excluir registro"><Icon name="trash" size={16} /></button></article>)}
         </section>
       )}
     </AppShell>

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { parse } from 'yaml'
 
-test('declara site e API com armazenamento JSON temporário no Blueprint ativo', async () => {
+test('reutiliza PostgreSQL existente com schema separado no Blueprint ativo', async () => {
   const blueprint = parse(await readFile('render.yaml', 'utf8'))
   const site = blueprint.services.find((service) => service.name === 'mamabloom')
   const api = blueprint.services.find((service) => service.name === 'mamabloom-api')
@@ -16,8 +16,9 @@ test('declara site e API com armazenamento JSON temporário no Blueprint ativo',
   )
   assert.equal(api.runtime, 'node')
   assert.equal(api.healthCheckPath, '/health')
-  assert.equal(api.envVars.find((variable) => variable.key === 'DATA_STORE').value, 'json')
-  assert.equal(api.envVars.find((variable) => variable.key === 'DATA_FILE_PATH').value, '/tmp/mamabloom/mamabloom.json')
+  assert.equal(api.envVars.find((variable) => variable.key === 'DATA_STORE').value, 'postgres')
+  assert.equal(api.envVars.find((variable) => variable.key === 'DATABASE_URL').sync, false)
+  assert.equal(api.envVars.find((variable) => variable.key === 'DATABASE_SCHEMA').value, 'mamabloom')
   assert.equal(api.envVars.find((variable) => variable.key === 'JWT_SECRET').generateValue, true)
   assert.equal(blueprint.databases, undefined)
 })

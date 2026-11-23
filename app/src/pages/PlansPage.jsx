@@ -26,7 +26,7 @@ export default function PlansPage() {
         {plans.map((plan) => (
           <article className={plan.featured ? 'plan-card plan-card--featured' : 'plan-card'} key={plan.id}>
             {plan.featured && <span className="plan-card__badge">Mais escolhido</span>}
-            <header><div><p>MamaBloom</p><h2>{plan.name}</h2></div><strong>{plan.price ? <>{formatCurrency(plan.price)}<small>/mês</small></> : 'Grátis'}</strong></header>
+            <header><div><p>MamaBloom</p><h2>{plan.name}</h2></div><strong>{plan.price === null ? 'Valor a definir' : plan.price ? <>{formatCurrency(plan.price)}<small>/mês</small></> : 'Grátis'}</strong></header>
             <p>{plan.description}</p>
             <ul>{plan.features.map((feature) => <li key={feature}><Icon name="check" size={17} />{feature}</li>)}</ul>
             <button className={selectedPlan === plan.id ? 'button button--ghost button--wide' : 'button button--primary button--wide'} type="button" onClick={() => choosePlan(plan)}>{selectedPlan === plan.id ? 'Plano selecionado' : 'Escolher plano'}</button>

@@ -16,7 +16,7 @@ const authValue = {
     id: 'user-a',
     name: 'Maria da Silva',
     email: 'maria@example.com',
-    pregnancy: { weeks: 21 },
+    pregnancy: { weeks: 21, babyName: 'Alicia' },
   },
 }
 
@@ -114,7 +114,7 @@ describe('regressões do redesign', () => {
     expect(container.querySelector('.support-prototype__suggested-avatar > span')).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('remove o plano Família e identifica Alicia como a bebê', () => {
+  it('mantém a bebê cadastrada no início', () => {
     const { rerender } = renderPage(<PlansPage />, '/planos')
     expect(screen.queryByText('Família')).not.toBeInTheDocument()
 

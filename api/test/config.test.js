@@ -8,6 +8,7 @@ test('permite iniciar com JSON sem DATABASE_URL e mantém PostgreSQL protegido p
     DATA_FILE_PATH: process.env.DATA_FILE_PATH,
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
+    DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
   }
 
   try {
@@ -23,6 +24,11 @@ test('permite iniciar com JSON sem DATABASE_URL e mantém PostgreSQL protegido p
 
     process.env.DATA_STORE = 'postgres'
     assert.throws(() => loadConfig(), /DATABASE_URL.*obrigatória/i)
+    process.env.DATABASE_URL = 'postgres://localhost/example'
+    process.env.DATABASE_SCHEMA = 'mamabloom'
+    assert.equal(loadConfig().databaseSchema, 'mamabloom')
+    process.env.DATABASE_SCHEMA = 'mamabloom;DROP SCHEMA public'
+    assert.throws(() => loadConfig(), /DATABASE_SCHEMA/)
   } finally {
     for (const [key, value] of Object.entries(previous)) {
       if (value === undefined) delete process.env[key]

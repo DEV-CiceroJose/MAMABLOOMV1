@@ -19,15 +19,18 @@ test('persiste usuários e módulos no arquivo JSON e recupera os dados após re
     passwordHash: 'hash-protegido',
   })
   await repository.updatePregnancy(user.id, { lastPeriod: '2026-05-01', weeks: 14 })
+  await repository.updateProfile(user.id, { name: 'Ana Santos', email: 'nova@example.com', birthDate: '1999-01-15', pregnancy: { lastPeriod: '2026-05-01', weeks: 14, babyName: 'Luna' } })
   await repository.setRecord(user.id, 'mamabloom:diary', [{ id: 'entry-1' }])
 
   const restartedRepository = await new JsonFileRepository(filePath).initialize()
-  const restartedUser = await restartedRepository.findUserByIdentity('ana@example.com')
+  const restartedUser = await restartedRepository.findUserByIdentity('nova@example.com')
   const record = await restartedRepository.getRecord(user.id, 'mamabloom:diary')
   const storedFile = JSON.parse(await readFile(filePath, 'utf8'))
 
   assert.equal(restartedUser.id, user.id)
-  assert.deepEqual(restartedUser.pregnancy, { lastPeriod: '2026-05-01', weeks: 14 })
+  assert.equal(restartedUser.name, 'Ana Santos')
+  assert.equal(restartedUser.birthDate, '1999-01-15')
+  assert.deepEqual(restartedUser.pregnancy, { lastPeriod: '2026-05-01', weeks: 14, babyName: 'Luna' })
   assert.deepEqual(record.value, [{ id: 'entry-1' }])
   assert.equal(storedFile.version, 1)
   assert.equal(storedFile.users[0].passwordHash, 'hash-protegido')
