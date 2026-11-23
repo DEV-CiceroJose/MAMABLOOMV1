@@ -128,16 +128,8 @@ export default function SupportPage() {
       )}
 
       <section className="support-prototype__suggested" aria-labelledby="suggested-title">
-        <header><h2 id="suggested-title">Perfis sugeridos para você:</h2><div className="support-prototype__scroll-controls">
-          <button type="button" aria-label="Perfis anteriores" onClick={() => suggestionsRef.current?.scrollBy({ left: -160, behavior: 'smooth' })}><Icon name="arrowLeft" size={18} /></button>
-          <button type="button" aria-label="Próximos perfis" onClick={() => suggestionsRef.current?.scrollBy({ left: 160, behavior: 'smooth' })}><Icon name="arrowRight" size={18} /></button>
-        </div></header>
-        <div className="support-prototype__profiles" ref={suggestionsRef} tabIndex={0} role="region" aria-label="Perfis sugeridos, deslize para os lados">{suggestedProfiles.map((profile) => <article key={profile.id}>
-          <div className="support-prototype__suggested-avatar">
-            <div className="support-prototype__suggested-avatar-frame"><img src={`${import.meta.env.BASE_URL}prototype/${profile.image}`} alt={`Perfil de ${profile.name}`} /></div>
-            <button type="button" onClick={() => openConversation(profile)} aria-label={`Conversar com ${profile.name}`}>+</button>
-          </div><strong>{profile.name}</strong>
-        </article>)}</div>
+        <h2 id="suggested-title">Perfis sugeridos para você:</h2>
+        <div>{suggestedProfiles.map((profile) => <article key={profile.name}><div className="support-prototype__suggested-avatar"><div className="support-prototype__suggested-avatar-frame"><img src={`${import.meta.env.BASE_URL}prototype/${profile.image}`} alt={`Perfil de ${profile.name}`} /></div><span aria-hidden="true">+</span></div><strong>{profile.name}</strong></article>)}</div>
       </section>
 
       <section className="support-prototype__tools" aria-labelledby="support-tools-title">
