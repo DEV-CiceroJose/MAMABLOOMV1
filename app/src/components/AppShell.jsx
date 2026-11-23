@@ -18,7 +18,6 @@ const menuItems = [
   { to: '/empresas', icon: 'building', label: 'Cadastrar empresa' },
   { to: '/loja', icon: 'bag', label: 'Loja MamaBloom' },
   { to: '/planos', icon: 'sparkles', label: 'Planos MamaBloom+' },
-  { to: '/instituicoes', icon: 'building', label: 'Para instituições' },
 ]
 
 export default function AppShell({ children, className = '', header = true, navTone = 'aqua' }) {

@@ -12,14 +12,14 @@ function renderRoute(route, extra = {}) {
 afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
 beforeEach(() => { vi.spyOn(communityApi, 'get').mockImplementation(async (path) => path === '/friends' ? { friends: [], suggestions: [] } : { role: 'patient', professional: null }) })
 
-it('abre o cadastro de conhecidos pelos dois atalhos de apoio, sem alterar o cartão de emergência', async () => {
+it('abre o cadastro de conhecidos pelo atalho único de apoio, sem alterar o cartão de emergência', async () => {
   const emergencyKey = 'mamabloom:user:contact-test:emergency-card'
   localStorage.setItem(emergencyKey, JSON.stringify({ contactName: 'Emergência', contactPhone: '85988887777' }))
   renderRoute('/apoio')
   const addLinks = await screen.findAllByRole('link', { name: /Adicionar apoio/ })
-  expect(addLinks).toHaveLength(2)
-  expect(addLinks[0].getAttribute('href')).toBe(addLinks[1].getAttribute('href'))
-  fireEvent.click(addLinks[1])
+  expect(addLinks).toHaveLength(1)
+  expect(addLinks[0]).toHaveAttribute('href', '/apoio/contatos')
+  fireEvent.click(addLinks[0])
   fireEvent.change(screen.getByLabelText('Nome do contato'), { target: { value: 'Ana Santos' } })
   fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '(85) 99999-1234' } })
   fireEvent.change(screen.getByLabelText('Vínculo'), { target: { value: 'Amigo(a)' } })
