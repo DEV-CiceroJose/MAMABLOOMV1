@@ -1,5 +1,11 @@
 .community-page { background: #fff9e9; }
 .community-header { padding: 26px 24px 30px; border-radius: 0 0 36px 36px; background: #75cdd4; color: #234855; }
+.community-header--yellow { background: var(--proto-yellow-soft); }
+.community-header--yellow .prototype-toolbar__tool,
+.community-header--yellow .prototype-toolbar__menu { color: #267e88; }
+.community-page--yellow .community-card { border-color: #eadcb6; }
+.professional-card { border-top: 5px solid var(--proto-yellow); }
+.booking-panel { background: #fff5d9; border-color: #edcc7b; }
 .community-header > a { display: inline-block; margin-top: 12px; font-size: .85rem; }
 .community-header h1 { font-family: var(--font-display); font-size: clamp(1.6rem, 7vw, 2rem); line-height: 1.15; margin: 16px 0 10px; }
 .community-header p { margin: 0; line-height: 1.5; }
@@ -44,9 +50,7 @@
 .article-reader p, .article-reader li { line-height: 1.8; }
 .article-reader li { margin-bottom: 9px; }
 .article-reader > a { display: block; margin-top: 22px; }
-.home-articles { margin-top: 24px; }
-.home-articles .article-cards { margin-bottom: 12px; }
-.home-prototype__reading { text-decoration: none; color: inherit; }
+.home-prototype__reading { text-decoration: none; }
 .support-prototype__therapy { text-decoration: none; color: inherit; }
 .support-prototype__suggested-avatar-frame .community-avatar { width: 100%; height: 100%; border-radius: 0; font-size: 2rem; }
 .friend-list small { display: block; color: #3b7a80; margin-top: 4px; }
@@ -54,8 +58,8 @@
 .friends-section { margin-bottom: 22px; }
 .baby-name-button { border: 0; padding: 4px 7px; border-radius: 7px; color: inherit; background: transparent; font: inherit; cursor: pointer; max-width: 100%; overflow-wrap: anywhere; }
 .baby-name-button:hover, .baby-name-button:focus-visible { background: #ffffff80; outline: 2px solid #5ba9b3; }
-.profile-photo-button { padding: 0; cursor: pointer; }
-.profile-photo-button img { width: 100%; height: 100%; object-fit: cover; }
+.profile-photo-button { padding: 0; border: 0; cursor: pointer; }
+.profile-photo-button img { position: absolute; inset: 9px; width: calc(100% - 18px); height: calc(100% - 18px); clip-path: inherit; object-fit: cover; }
 .profile-prototype__links .profile-prototype__pregnancy { border-radius: 22px; background: #dff2f3; border-bottom: none; }
 .profile-prototype__message { padding: 8px 0; background: transparent; border: 0; box-shadow: none; }
 .profile-prototype__identity { background: transparent; }

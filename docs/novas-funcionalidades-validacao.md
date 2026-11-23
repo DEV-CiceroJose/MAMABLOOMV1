@@ -17,7 +17,8 @@ Comparação de leitura feita no workspace Render `test-devs`, confirmado pelo u
 - Edição do nome do bebê pela legenda da imagem gestacional, com persistência na conta.
 - Foto de perfil editável (PNG, JPEG ou WebP, até 200 KB), salva na conta.
 - Linha de gestação com o mesmo fundo dos atalhos do perfil; remoção do balão bege decorativo.
-- Cinco leituras adaptadas dos modelos editoriais fornecidos, disponíveis na home e na Central de Apoio. A leitura diária usa a data de São Paulo e abre o mesmo catálogo de artigos.
+- Cinco leituras adaptadas dos modelos editoriais fornecidos, disponíveis na Central de Apoio. A leitura diária na home usa a data de São Paulo e abre o artigo correspondente; a lista de cartões de artigos foi removida da página inicial.
+- Nesta revisão visual, a leitura diária recuperou o texto branco e a aparência anterior, a foto de perfil ficou dentro da moldura hexagonal amarela, e as páginas de artigos, empresas e administração receberam detalhes amarelos da paleta.
 - Remoção do bloco Recursos de acolhimento, substituído pelos artigos.
 - Perfis sugeridos vindos de contas reais; o + cria uma amizade persistente sem duplicidade. Contatos de confiança permanecem separados.
 - Conversa entre amigas adicionadas com mensagens persistidas e acesso restrito às duas contas.
@@ -52,11 +53,11 @@ node --watch src/server.js
 4. Em outro terminal, a partir de app:
 
 ```powershell
-$env:VITE_API_URL='http://localhost:3002'
+$env:VITE_API_URL='http://127.0.0.1:3002'
 pnpm dev --host 127.0.0.1 --port 5174 --strictPort
 ```
 
-5. Abrir http://localhost:5174/app/login. Usar localhost nos dois serviços para manter o cookie no mesmo site.
+5. Abrir http://127.0.0.1:5174/app/login. Usar `127.0.0.1` nos dois serviços para manter o cookie no mesmo site. Nesta máquina, outro serviço atende `localhost:3002` pelo IPv6, por isso o endereço explícito evita a colisão.
 
 | Conta | Login | Uso |
 | --- | --- | --- |
@@ -95,7 +96,7 @@ O privilégio é um registro interno que não pode ser escrito pela API genéric
 
 - Verificações de API e frontend, testes de acesso entre contas, aprovação, isolamento de mensagens, reenvio sem duplicação, persistência e conflito de reservas.
 - Repositório PostgreSQL exercitado com pg-mem; concorrência de gravação JSON testada. Não houve teste de carga ou conexão ao PostgreSQL de produção.
-- Navegador: login, edição de nome, amizade, reserva, envio/recebimento de mensagens em contas distintas, painel profissional, aprovação e abas administrativas.
+- Navegador: login, edição de nome, amizade, reserva, envio/recebimento de mensagens em contas distintas, painel profissional, aprovação e abas administrativas. Nesta revisão, a home foi conferida sem os cartões de artigos, com leitura diária em branco, e a foto foi conferida dentro da moldura amarela.
 - Conferência visual dos planos em tela estreita; revisão de responsividade das novas páginas.
 
 A integração na main depende da validação explícita do usuário.

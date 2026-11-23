@@ -6,7 +6,6 @@ import IllustratedActionCard from '../components/prototype/IllustratedActionCard
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 import { dailyArticle } from '../data/articles.js'
-import { ArticleCards } from './ArticlesPage.jsx'
 
 const extraLinks = [
   { to: '/saude', icon: 'activity', label: 'Saúde da mamãe' },
@@ -73,7 +72,6 @@ export default function HomePreviewPage() {
             <span>{reading.category}</span>
           </div>
         </Link>
-        <section className="home-articles"><h2>Artigos para você</h2><ArticleCards limit={3} /><Link to="/artigos">Ver todas as leituras →</Link></section>
 
         <section className="home-prototype__more" aria-labelledby="home-more-title">
           <h2 id="home-more-title">Continue explorando</h2>

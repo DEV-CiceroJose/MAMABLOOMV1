@@ -5,7 +5,7 @@ import { articles } from '../data/articles.js'
 export default function ArticlesPage() {
   const { id } = useParams()
   const article = articles.find((item) => item.id === id)
-  return <FeaturePage title={id ? article?.title || 'Artigo não encontrado' : 'Leituras para sua jornada'} intro={article?.category}>
+  return <FeaturePage tone="yellow" title={id ? article?.title || 'Artigo não encontrado' : 'Leituras para sua jornada'} intro={article?.category}>
     {article ? <article className="community-card article-reader"><p>{article.introduction}</p><h2>Pontos para explorar</h2><ul>{article.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul><p>{article.conclusion}</p><small>Texto adaptado dos modelos editoriais fornecidos ao MamaBloom.</small><Link to="/artigos">Ver todas as leituras</Link></article> : <>{id && <p>Essa leitura não está disponível. Escolha outra abaixo.</p>}<ArticleCards /></>}
   </FeaturePage>
 }

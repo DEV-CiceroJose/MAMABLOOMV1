@@ -27,6 +27,7 @@ it('a legenda do bebê permite salvar o nome na conta e cancelar sem alteração
 
 it('a leitura diária abre o artigo compartilhado da home', () => {
   open('/inicio')
+  expect(screen.queryByRole('heading', { name: 'Artigos para você' })).not.toBeInTheDocument()
   const link = screen.getAllByRole('link').find((item) => item.classList.contains('home-prototype__reading'))
   expect(link).toHaveAttribute('href', `/artigos/${dailyArticle().id}`)
   fireEvent.click(link)
