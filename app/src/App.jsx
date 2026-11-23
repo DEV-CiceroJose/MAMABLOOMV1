@@ -8,7 +8,6 @@ import DiaryPage from './pages/DiaryPage.jsx'
 import DiaryReaderPage from './pages/DiaryReaderPage.jsx'
 import EmergencyCardPage from './pages/EmergencyCardPage.jsx'
 import HealthPage from './pages/HealthPage.jsx'
-import InstitutionalPage from './pages/InstitutionalPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import PregnancyStepPage from './pages/PregnancyStepPage.jsx'
@@ -59,7 +58,7 @@ function App() {
       <Route path="/loja" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
       <Route path="/carrinho" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
       <Route path="/planos" element={<ProtectedRoute><PlansPage /></ProtectedRoute>} />
-      <Route path="/instituicoes" element={<ProtectedRoute><InstitutionalPage /></ProtectedRoute>} />
+      <Route path="/instituicoes" element={<Navigate to="/empresas" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
