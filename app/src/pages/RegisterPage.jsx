@@ -11,7 +11,7 @@ import {
   isValidPassword,
 } from '../lib/validation.js'
 
-export default function RegisterPage() {
+export default function RegisterPage({ professional = false }) {
   const [form, setForm] = useState({ name: '', cpf: '', email: '', birthDate: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [accepted, setAccepted] = useState(false)
@@ -30,7 +30,7 @@ export default function RegisterPage() {
     if (form.name.trim().split(/\s+/).length < 2) nextErrors.name = 'Informe seu nome e sobrenome.'
     if (!isValidIdentity(form.cpf) || form.cpf.includes('@')) nextErrors.cpf = 'Informe um CPF com 11 dígitos.'
     if (!isValidEmail(form.email)) nextErrors.email = 'Informe um e-mail válido.'
-    if (!isAdultEnough(form.birthDate)) nextErrors.birthDate = 'O MamaBloom é destinado a pessoas com 16 anos ou mais.'
+    if (!isAdultEnough(form.birthDate, professional ? 18 : 16)) nextErrors.birthDate = professional ? 'O cadastro profissional exige 18 anos ou mais.' : 'O MamaBloom é destinado a pessoas com 16 anos ou mais.'
     if (!isValidPassword(form.password)) nextErrors.password = 'Use pelo menos 6 caracteres.'
     if (!accepted) nextErrors.accepted = 'Você precisa confirmar para continuar.'
     setErrors(nextErrors)
@@ -39,7 +39,7 @@ export default function RegisterPage() {
     setSubmitting(true)
     try {
       await register(form)
-      navigate('/cadastro/gestacao')
+      navigate(professional ? '/psicologia/profissional' : '/cadastro/gestacao')
     } catch (error) {
       setErrors({ ...(error.fields ?? {}), form: error.message })
     } finally {
@@ -49,8 +49,8 @@ export default function RegisterPage() {
 
   return (
     <AuthFrame
-      title="Cadastro"
-      subtitle="Preencha seus dados para começar sua jornada com o MamaBloom."
+      title={professional ? 'Cadastro profissional' : 'Cadastro'}
+      subtitle={professional ? 'Crie sua conta e envie seu perfil de psicólogo para aprovação.' : 'Preencha seus dados para começar sua jornada com o MamaBloom.'}
       step="Etapa 1 de 2"
       illustration="baby"
     >

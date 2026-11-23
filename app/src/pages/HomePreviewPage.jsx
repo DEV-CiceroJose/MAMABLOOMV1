@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../components/AppShell.jsx'
 import Icon from '../components/Icon.jsx'
 import IllustratedActionCard from '../components/prototype/IllustratedActionCard.jsx'
 import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { useAuth } from '../hooks/useAuth.js'
+import { dailyArticle } from '../data/articles.js'
+import { ArticleCards } from './ArticlesPage.jsx'
 
 const extraLinks = [
   { to: '/saude', icon: 'activity', label: 'Saúde da mamãe' },
@@ -15,7 +18,20 @@ const extraLinks = [
 ]
 
 export default function HomePreviewPage() {
-  const { user } = useAuth()
+  const { user, updateProfile } = useAuth()
+  const [editingBaby, setEditingBaby] = useState(false)
+  const [babyDraft, setBabyDraft] = useState(user?.pregnancy?.babyName || '')
+  const [babyStatus, setBabyStatus] = useState('')
+  const [babyError, setBabyError] = useState('')
+  const [savingBaby, setSavingBaby] = useState(false)
+  const reading = dailyArticle()
+  async function saveBaby(event) {
+    event.preventDefault(); setSavingBaby(true); setBabyError('')
+    try {
+      await updateProfile({ name: user.name, email: user.email, birthDate: user.birthDate, babyName: babyDraft.trim() })
+      setEditingBaby(false); setBabyStatus('Nome do bebê atualizado.')
+    } catch (error) { setBabyError(error.message) } finally { setSavingBaby(false) }
+  }
   const weeks = user?.pregnancy?.weeks ?? 21
   const month = Math.min(9, Math.max(1, Math.ceil(weeks / 4)))
   const babyName = user?.pregnancy?.babyName?.trim() || 'Meu bebê'
@@ -34,12 +50,14 @@ export default function HomePreviewPage() {
             </div>
             <figure className="home-prototype__baby">
               <span className="home-prototype__baby-art"><img src={prototypeAsset('pregnancy-improved.png')} alt={`Ilustração do desenvolvimento de ${babyName}`} /></span>
-              <figcaption>{babyName}</figcaption>
+              <figcaption><button className="baby-name-button" type="button" aria-label="Editar nome do bebê" onClick={() => { setBabyDraft(user?.pregnancy?.babyName || ''); setEditingBaby(true); setBabyStatus(''); setBabyError('') }}>{babyName} <Icon name="edit" size={14} /></button></figcaption>
             </figure>
           </div>
         </section>
       )}
     >
+      {editingBaby && <form className="community-card community-form" onSubmit={saveBaby}><label>Nome do bebê<input autoFocus maxLength={80} value={babyDraft} onChange={(event) => setBabyDraft(event.target.value)} placeholder="Meu bebê" /></label><div className="community-actions"><button className="button button--primary" type="submit" disabled={savingBaby}>Salvar nome</button><button className="button button--outline" type="button" disabled={savingBaby} onClick={() => setEditingBaby(false)}>Cancelar</button></div>{babyError && <p role="alert" className="field-error">{babyError}</p>}</form>}
+      {babyStatus && <p className="community-status" role="status">{babyStatus}</p>}
       <section className="home-prototype__content" aria-labelledby="home-access-title">
         <h2 id="home-access-title">Acesse:</h2>
         <div className="home-prototype__actions">
@@ -48,13 +66,14 @@ export default function HomePreviewPage() {
         </div>
 
         <h2>Faça a leitura do dia!</h2>
-        <article className="home-prototype__reading">
-          <img src={prototypeAsset('home-reading.webp')} alt="Gestante preparando a bolsa da maternidade" />
+        <Link to={`/artigos/${reading.id}`} className="home-prototype__reading">
+          <img src={prototypeAsset('home-reading.webp')} alt="Leitura para a jornada materna" />
           <div>
-            <strong>Gravidez Saudável:</strong>
-            <span>orientações para uma boa gestação.</span>
+            <strong>{reading.title}</strong>
+            <span>{reading.category}</span>
           </div>
-        </article>
+        </Link>
+        <section className="home-articles"><h2>Artigos para você</h2><ArticleCards limit={3} /><Link to="/artigos">Ver todas as leituras →</Link></section>
 
         <section className="home-prototype__more" aria-labelledby="home-more-title">
           <h2 id="home-more-title">Continue explorando</h2>

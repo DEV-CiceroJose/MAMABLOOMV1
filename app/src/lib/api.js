@@ -1,5 +1,5 @@
 const SESSION_KEY = 'mamabloom:session'
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+const API_BASE_URL = (import.meta.env.VITE_API_URL || `http://${['localhost', '127.0.0.1'].includes(window.location.hostname) ? window.location.hostname : 'localhost'}:3001`).replace(/\/$/, '')
 
 export class ApiError extends Error {
   constructor(message, { code = 'API_ERROR', status = 0, fields } = {}) {
@@ -85,4 +85,10 @@ export const dataApi = {
   set(key, value) {
     return request(`/v1/data/${encodeURIComponent(key)}`, { method: 'PUT', body: { value } })
   },
+}
+
+export const communityApi = {
+  get: (path) => request(`/v1/community${path}`),
+  post: (path, body) => request(`/v1/community${path}`, { method: 'POST', body }),
+  put: (path, body) => request(`/v1/community${path}`, { method: 'PUT', body }),
 }

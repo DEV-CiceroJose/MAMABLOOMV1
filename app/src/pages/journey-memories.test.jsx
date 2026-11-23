@@ -3,12 +3,13 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App.jsx'
 import { AuthContext } from '../context/auth-context.js'
+import { communityApi } from '../lib/api.js'
 
 const user = { id: 'memories-test', name: 'Brenda Laís', email: 'brenda@example.com', pregnancy: { weeks: 12, babyName: 'Luna' } }
 function open(route, account = user) {
   return render(<MemoryRouter initialEntries={[route]}><AuthContext.Provider value={{ user: account, logout: vi.fn() }}><App /></AuthContext.Provider></MemoryRouter>)
 }
-afterEach(() => { cleanup(); localStorage.clear() })
+afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
 
 it('personaliza o início com o bebê sem usar o nome da mãe ou um nome fixo', () => {
   open('/inicio')
@@ -62,8 +63,14 @@ it('abre um diário vazio com acesso para escrever a primeira memória', () => {
   expect(screen.getByRole('textbox', { name: 'Querido diário,' })).toBeInTheDocument()
 })
 
-it('o adicionar fora do avatar abre uma conversa com o perfil sugerido', () => {
+it('o adicionar inclui o perfil na rede e deixa de sugerir a mesma pessoa', async () => {
+  const person = { id: 'ana', name: 'Ana Beatriz' }
+  let added = false
+  vi.spyOn(communityApi, 'get').mockImplementation(async (path) => path === '/friends' ? { friends: added ? [person] : [], suggestions: added ? [] : [person] } : { role: 'patient' })
+  const post = vi.spyOn(communityApi, 'post').mockImplementation(async () => { added = true; return { added: true } })
   open('/apoio')
-  fireEvent.click(screen.getByRole('button', { name: 'Conversar com Ana Beatriz' }))
-  expect(screen.getByRole('textbox', { name: 'Mensagem para Ana Beatriz' })).toBeInTheDocument()
+  fireEvent.click(await screen.findByRole('button', { name: 'Adicionar Ana Beatriz como amiga' }))
+  expect(await screen.findByText('Adicionada à sua rede')).toBeInTheDocument()
+  expect(post).toHaveBeenCalledWith('/friends', { userId: 'ana' })
+  expect(screen.queryByRole('button', { name: 'Adicionar Ana Beatriz como amiga' })).not.toBeInTheDocument()
 })

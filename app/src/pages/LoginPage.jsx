@@ -5,6 +5,7 @@ import FormField from '../components/FormField.jsx'
 import Icon from '../components/Icon.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 import { isValidIdentity, isValidPassword } from '../lib/validation.js'
+import { communityApi } from '../lib/api.js'
 
 export default function LoginPage() {
   const [identity, setIdentity] = useState('')
@@ -27,7 +28,8 @@ export default function LoginPage() {
     setSubmitting(true)
     try {
       await login(identity.trim(), password)
-      navigate(location.state?.from || '/inicio', { replace: true })
+      const access = await communityApi.get('/me').catch(() => null)
+      navigate(location.state?.from || (access?.role === 'admin' ? '/administracao' : access?.professional ? '/psicologia/profissional' : '/inicio'), { replace: true })
     } catch (error) {
       setErrors({ form: error.message })
     } finally {
@@ -81,6 +83,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="auth-switch">Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link></p>
+      <p className="auth-switch">É psicólogo? <Link to="/cadastro/psicologo">Cadastre seu perfil profissional</Link></p>
       <p className="prototype-note">Seus dados são protegidos e sincronizados com sua conta.</p>
     </AuthFrame>
   )

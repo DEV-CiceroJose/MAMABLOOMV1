@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
+import { registerCommunityRoutes } from './community.js'
 
 const allowedDataKeys = new Set([
   'mamabloom:appointments',
@@ -66,7 +67,7 @@ const pregnancySchema = z.object({
 })
 
 const dataSchema = z.object({ value: z.json() })
-const profileSchema = z.object({ name: registrationSchema.shape.name, email: registrationSchema.shape.email, birthDate: registrationSchema.shape.birthDate, babyName: z.string().trim().max(80).optional() }).refine((data) => ageOnDate(data.birthDate) >= 16, {
+const profileSchema = z.object({ name: registrationSchema.shape.name, email: registrationSchema.shape.email, birthDate: registrationSchema.shape.birthDate, babyName: z.string().trim().max(80).optional(), avatarImage: z.string().max(300000).refine((s) => s === '' || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s)).optional() }).refine((data) => ageOnDate(data.birthDate) >= 16, {
   path: ['birthDate'], message: 'O MamaBloom é destinado a pessoas com 16 anos ou mais.',
 })
 const contactsSchema = z.object({ value: z.array(z.object({
@@ -86,6 +87,7 @@ function publicUser(user) {
     name: user.name,
     email: user.email,
     birthDate: user.birthDate,
+    avatarImage: user.avatarImage || '',
     pregnancy: user.pregnancy ?? null,
     createdAt: user.createdAt,
   }
@@ -272,6 +274,7 @@ export function createApp({ repository, config }) {
     }
   })
 
+  registerCommunityRoutes(app, { repository, authenticate })
   app.use((_req, res) => res.status(404).json(errorBody('NOT_FOUND', 'Rota não encontrada.')))
   app.use((error, _req, res, _next) => {
     if (error instanceof SyntaxError && 'body' in error) {

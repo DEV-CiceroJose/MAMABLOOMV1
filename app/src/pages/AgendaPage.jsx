@@ -5,23 +5,31 @@ import PrototypeToolbar from '../components/prototype/PrototypeToolbar.jsx'
 import { appointmentTypes, createDefaultAppointments } from '../data/demoData.js'
 import { useLocalData } from '../hooks/useLocalData.js'
 import { formatLongDate, formatShortDate, getMonthGrid, toDateKey } from '../lib/date.js'
+import { useCommunity } from '../hooks/useCommunity.js'
+import { useAuth } from '../hooks/useAuth.js'
+import { Link } from 'react-router-dom'
+import { saoPauloDay } from '../lib/psychology.js'
 
 const weekdays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
 const createId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
 
 export default function AgendaPage() {
   const [appointments, setAppointments] = useLocalData('mamabloom:appointments', createDefaultAppointments)
+  const { user } = useAuth()
+  const clinic = useCommunity('/consultations')
+  const clinicEvents = useMemo(() => (clinic.data?.consultations || []).filter((item) => item.status === 'confirmed').map((item) => ({ id: item.id, date: saoPauloDay(item.startsAt), time: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', timeStyle: 'short' }).format(new Date(item.startsAt)), title: `Psicologia · ${item.professionalId === user.id ? item.patientName : item.professionalName}`, type: 'Consulta online', clinic: true })), [clinic.data, user.id])
+  const allAppointments = [...appointments, ...clinicEvents]
   const [selectedDate, setSelectedDate] = useState(toDateKey())
   const [visibleMonth, setVisibleMonth] = useState(() => new Date())
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ title: '', type: 'Consulta', date: toDateKey(), time: '09:00' })
 
   const monthCells = getMonthGrid(visibleMonth.getFullYear(), visibleMonth.getMonth())
-  const eventDates = useMemo(() => new Set(appointments.map((item) => item.date)), [appointments])
-  const selectedAppointments = [...appointments]
+  const eventDates = useMemo(() => new Set([...appointments, ...clinicEvents].map((item) => item.date)), [appointments, clinicEvents])
+  const selectedAppointments = [...allAppointments]
     .filter((item) => item.date === selectedDate)
     .sort((a, b) => a.time.localeCompare(b.time))
-  const upcomingAppointments = [...appointments]
+  const upcomingAppointments = [...allAppointments]
     .filter((item) => item.date > selectedDate)
     .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
     .slice(0, 3)
@@ -56,9 +64,9 @@ export default function AgendaPage() {
           <small>{item.time} · {item.type}</small>
         </div>
         <span>{formatShortDate(item.date)}</span>
-        <button type="button" onClick={() => removeAppointment(item.id)} aria-label={`Excluir ${item.title}`}>
+        {item.clinic ? <Link to="/psicologia#minhas-consultas">Ver consulta</Link> : <button type="button" onClick={() => removeAppointment(item.id)} aria-label={`Excluir ${item.title}`}>
           <Icon name="trash" size={16} />
-        </button>
+        </button>}
       </article>
     )
   }
@@ -94,6 +102,7 @@ export default function AgendaPage() {
         </section>
       )}
     >
+      {clinic.error && <p role="alert" className="field-error">Consultas de psicologia: {clinic.error}</p>}
       {showForm && (
         <form className="feature-form agenda-prototype__form" onSubmit={addAppointment}>
           <div className="feature-form__heading"><h2>Novo compromisso</h2><button type="button" className="text-button" onClick={() => setShowForm(false)}>Cancelar</button></div>

@@ -19,6 +19,10 @@ import ShopPage from './pages/ShopPage.jsx'
 import SupportPage from './pages/SupportPage.jsx'
 import TrustedContactsPage from './pages/TrustedContactsPage.jsx'
 import WelcomePage from './pages/WelcomePage.jsx'
+import PsychologyPage, { ProfessionalPage } from './pages/PsychologyPage.jsx'
+import AdminPage from './pages/AdminPage.jsx'
+import CompaniesPage from './pages/CompaniesPage.jsx'
+import ArticlesPage from './pages/ArticlesPage.jsx'
 
 function App() {
   return (
@@ -26,6 +30,7 @@ function App() {
       <Route path="/" element={<WelcomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
+      <Route path="/cadastro/psicologo" element={<RegisterPage professional />} />
       <Route path="/cadastro/gestacao" element={<PregnancyStepPage />} />
       <Route
         path="/inicio"
@@ -44,6 +49,12 @@ function App() {
       <Route path="/bloomie" element={<ProtectedRoute><BloomiePage /></ProtectedRoute>} />
       <Route path="/relatorios" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
       <Route path="/apoio" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
+      <Route path="/psicologia" element={<ProtectedRoute><PsychologyPage /></ProtectedRoute>} />
+      <Route path="/psicologia/profissional" element={<ProtectedRoute><ProfessionalPage /></ProtectedRoute>} />
+      <Route path="/administracao" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+      <Route path="/empresas" element={<ProtectedRoute><CompaniesPage /></ProtectedRoute>} />
+      <Route path="/artigos" element={<ProtectedRoute><ArticlesPage /></ProtectedRoute>} />
+      <Route path="/artigos/:id" element={<ProtectedRoute><ArticlesPage /></ProtectedRoute>} />
       <Route path="/apoio/contatos" element={<ProtectedRoute><TrustedContactsPage /></ProtectedRoute>} />
       <Route path="/loja" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
       <Route path="/carrinho" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
