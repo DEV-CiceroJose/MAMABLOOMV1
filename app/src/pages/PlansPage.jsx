@@ -19,7 +19,7 @@ export default function PlansPage() {
   }
 
   return (
-    <AppShell className="commerce-prototype plans-prototype" header={({ openMenu }) => <header className="commerce-prototype__header"><span /><h1>MamaBloom+</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
+    <AppShell className="commerce-prototype plans-prototype" header={({ openMenu }) => <header className="commerce-prototype__header"><span /><h1>MamaBloom</h1><PrototypeToolbar onMenu={openMenu} /></header>}>
       <section className="plans-intro"><span><Icon name="sparkles" /></span><div><h2>Escolha o cuidado que combina com você</h2><p>Compare os recursos previstos para cada modalidade.</p></div></section>
       {message && <p className="plan-message" role="status">{message}</p>}
       <section className="plans-list" aria-label="Planos disponíveis">

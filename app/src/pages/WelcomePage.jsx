@@ -45,6 +45,7 @@ export default function WelcomePage() {
             </>
           )}
         </div>
+        {!user && <Link className="text-button" to="/cadastro/psicologo">Sou psicólogo · Cadastrar perfil</Link>}
         <span className="welcome-policy">Política de Privacidade</span>
       </section>
     </main>

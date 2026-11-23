@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS community_state (id INTEGER PRIMARY KEY, value JSONB NOT NULL);
+INSERT INTO community_state (id, value) VALUES (1, '{}') ON CONFLICT (id) DO NOTHING;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_image TEXT;

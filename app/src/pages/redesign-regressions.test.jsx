@@ -101,17 +101,15 @@ describe('regressões do redesign', () => {
     expect(copy.closest('.bloomie-prototype__character')).toContainElement(screen.getByAltText('Bloomie, assistente virtual do MamaBloom'))
   })
 
-  it('mostra ausência de apoio e abre uma conversa a partir da lista', () => {
-    const { container } = renderPage(<SupportPage />, '/apoio')
+  it('mantém o apoio e leva ao agendamento de psicologia com artigos no lugar dos recursos', () => {
+    renderPage(<SupportPage />, '/apoio')
 
     expect(screen.getByRole('heading', { name: 'Sem apoio cadastrado' })).toBeInTheDocument()
-    const therapy = screen.getByRole('button', { name: /Agende uma sessão/ })
+    const therapy = screen.getByRole('link', { name: /Agende uma sessão/ })
     expect(therapy.querySelector('img')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Abrir conversa com Andréia Martins' }))
-    expect(screen.getByRole('heading', { name: 'Andréia Martins' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Mensagem para Andréia Martins' })).toBeInTheDocument()
-    expect(container.querySelector('.support-prototype__suggested-avatar-frame')).toBeInTheDocument()
-    expect(container.querySelector('.support-prototype__suggested-avatar > span')).toHaveAttribute('aria-hidden', 'true')
+    expect(therapy).toHaveAttribute('href', '/psicologia')
+    expect(screen.queryByText('Recursos de acolhimento')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Primeiros dias com o bebê/ })).toHaveAttribute('href', '/artigos/primeiros-dias')
   })
 
   it('mantém a bebê cadastrada no início', () => {

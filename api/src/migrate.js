@@ -10,4 +10,5 @@ export async function migrate(pool, schema = 'public') {
   const migrationUrl = new URL('../migrations/001_initial.sql', import.meta.url)
   const sql = await readFile(migrationUrl, 'utf8')
   await pool.query(sql)
+  await pool.query(await readFile(new URL('../migrations/002_community.sql', import.meta.url), 'utf8'))
 }

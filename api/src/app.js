@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
+import { getAccountArea, registerCommunityRoutes } from './community.js'
 
 const allowedDataKeys = new Set([
   'mamabloom:appointments',
@@ -46,9 +47,12 @@ const registrationSchema = z.object({
   cpf: z.string().transform((value) => value.replace(/\D/g, '')).pipe(z.string().length(11)),
   birthDate: z.string().refine(isValidDate, 'Data de nascimento inválida.'),
   password: z.string().min(6).max(128),
-}).refine((data) => ageOnDate(data.birthDate) >= 16, {
-  path: ['birthDate'],
-  message: 'O MamaBloom é destinado a pessoas com 16 anos ou mais.',
+  accountType: z.enum(['patient', 'professional']).default('patient'),
+}).superRefine((data, context) => {
+  if (ageOnDate(data.birthDate) < (data.accountType === 'professional' ? 18 : 16)) context.addIssue({
+    code: 'custom', path: ['birthDate'],
+    message: data.accountType === 'professional' ? 'O cadastro profissional exige 18 anos ou mais.' : 'O MamaBloom é destinado a pessoas com 16 anos ou mais.',
+  })
 })
 
 const loginSchema = z.object({
@@ -66,7 +70,7 @@ const pregnancySchema = z.object({
 })
 
 const dataSchema = z.object({ value: z.json() })
-const profileSchema = z.object({ name: registrationSchema.shape.name, email: registrationSchema.shape.email, birthDate: registrationSchema.shape.birthDate, babyName: z.string().trim().max(80).optional() }).refine((data) => ageOnDate(data.birthDate) >= 16, {
+const profileSchema = z.object({ name: registrationSchema.shape.name, email: registrationSchema.shape.email, birthDate: registrationSchema.shape.birthDate, babyName: z.string().trim().max(80).optional(), avatarImage: z.string().max(300000).refine((s) => s === '' || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s)).optional() }).refine((data) => ageOnDate(data.birthDate) >= 16, {
   path: ['birthDate'], message: 'O MamaBloom é destinado a pessoas com 16 anos ou mais.',
 })
 const contactsSchema = z.object({ value: z.array(z.object({
@@ -86,6 +90,7 @@ function publicUser(user) {
     name: user.name,
     email: user.email,
     birthDate: user.birthDate,
+    avatarImage: user.avatarImage || '',
     pregnancy: user.pregnancy ?? null,
     createdAt: user.createdAt,
   }
@@ -156,6 +161,13 @@ export function createApp({ repository, config }) {
     }
   }
 
+  async function patientOnly(req, res, next) {
+    try {
+      if (await getAccountArea(repository, req.user.id) !== 'patient') return res.status(403).json(errorBody('AREA_FORBIDDEN', 'Esta área não está disponível para sua conta.'))
+      return next()
+    } catch (error) { return next(error) }
+  }
+
   app.get('/health', (_req, res) => res.json({ status: 'ok' }))
 
   app.post('/v1/auth/register', authLimiter, async (req, res, next) => {
@@ -179,6 +191,7 @@ export function createApp({ repository, config }) {
         birthDate: parsed.data.birthDate,
         passwordHash,
       })
+      if (parsed.data.accountType === 'professional') await repository.setRecord(user.id, 'internal:role', 'professional')
       return res.status(201).json(startSession(res, user))
     } catch (error) {
       return next(error)
@@ -208,6 +221,7 @@ export function createApp({ repository, config }) {
     const parsed = profileSchema.safeParse(req.body)
     if (!parsed.success) return res.status(422).json(errorBody('VALIDATION_ERROR', 'Confira seus dados pessoais.', validationFields(parsed.error)))
     try {
+      if (parsed.data.babyName !== undefined && await getAccountArea(repository, req.user.id) !== 'patient') return res.status(403).json(errorBody('AREA_FORBIDDEN', 'Esta área não está disponível para sua conta.'))
       const existing = await repository.findUserByIdentity(parsed.data.email)
       if (existing && existing.id !== req.user.id) return res.status(409).json(errorBody('ACCOUNT_EXISTS', 'Já existe uma conta com este e-mail.'))
       const { babyName, ...profile } = parsed.data
@@ -227,7 +241,7 @@ export function createApp({ repository, config }) {
     return res.status(204).end()
   })
 
-  app.put('/v1/auth/pregnancy', authenticate, async (req, res, next) => {
+  app.put('/v1/auth/pregnancy', authenticate, patientOnly, async (req, res, next) => {
     const parsed = pregnancySchema.safeParse(req.body)
     if (!parsed.success) {
       return res.status(422).json(errorBody('VALIDATION_ERROR', 'Confira os dados da gestação.', validationFields(parsed.error)))
@@ -241,7 +255,7 @@ export function createApp({ repository, config }) {
     }
   })
 
-  app.get('/v1/data/:key', authenticate, async (req, res, next) => {
+  app.get('/v1/data/:key', authenticate, patientOnly, async (req, res, next) => {
     if (!allowedDataKeys.has(req.params.key)) {
       return res.status(422).json(errorBody('INVALID_DATA_KEY', 'Módulo de dados não reconhecido.'))
     }
@@ -255,7 +269,7 @@ export function createApp({ repository, config }) {
     }
   })
 
-  app.put('/v1/data/:key', authenticate, async (req, res, next) => {
+  app.put('/v1/data/:key', authenticate, patientOnly, async (req, res, next) => {
     if (!allowedDataKeys.has(req.params.key)) {
       return res.status(422).json(errorBody('INVALID_DATA_KEY', 'Módulo de dados não reconhecido.'))
     }
@@ -272,6 +286,7 @@ export function createApp({ repository, config }) {
     }
   })
 
+  registerCommunityRoutes(app, { repository, authenticate })
   app.use((_req, res) => res.status(404).json(errorBody('NOT_FOUND', 'Rota não encontrada.')))
   app.use((error, _req, res, _next) => {
     if (error instanceof SyntaxError && 'body' in error) {

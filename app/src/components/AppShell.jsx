@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
 import BrandLogo from './BrandLogo.jsx'
 import Icon from './Icon.jsx'
 import PrototypeBottomNav from './prototype/PrototypeBottomNav.jsx'
+import { AccessContext, accountArea } from '../context/access-context.js'
 
 const menuItems = [
   { to: '/agenda', icon: 'calendar', label: 'Agenda' },
@@ -12,6 +13,9 @@ const menuItems = [
   { to: '/emergencia', icon: 'shield', label: 'Cartão de emergência' },
   { to: '/relatorios', icon: 'chart', label: 'Relatório gestacional' },
   { to: '/apoio', icon: 'heart', label: 'Central de apoio' },
+  { to: '/psicologia', icon: 'psychology', label: 'Psicologia' },
+  { to: '/artigos', icon: 'message', label: 'Artigos' },
+  { to: '/empresas', icon: 'building', label: 'Cadastrar empresa' },
   { to: '/loja', icon: 'bag', label: 'Loja MamaBloom' },
   { to: '/planos', icon: 'sparkles', label: 'Planos MamaBloom+' },
   { to: '/instituicoes', icon: 'building', label: 'Para instituições' },
@@ -21,6 +25,8 @@ export default function AppShell({ children, className = '', header = true, navT
   const [menuOpen, setMenuOpen] = useState(false)
   const { logout } = useAuth()
   const navigate = useNavigate()
+  const access = useContext(AccessContext)
+  const area = accountArea(access)
 
   function handleLogout() {
     logout()
@@ -57,7 +63,9 @@ export default function AppShell({ children, className = '', header = true, navT
           </button>
         </div>
         <nav className="drawer-nav" aria-label="Recursos MamaBloom">
-          {menuItems.map((item) => (
+          {area === 'admin' && <NavLink to="/administracao" onClick={() => setMenuOpen(false)}><span><Icon name="shield" /></span>Administração<Icon name="chevronRight" size={18} /></NavLink>}
+          {area === 'professional' && <NavLink to="/psicologia/profissional" onClick={() => setMenuOpen(false)}><span><Icon name="psychology" /></span>Meu painel profissional<Icon name="chevronRight" size={18} /></NavLink>}
+          {area === 'patient' && menuItems.map((item) => (
             <NavLink key={item.to} to={item.to} onClick={() => setMenuOpen(false)}>
               <span><Icon name={item.icon} /></span>
               {item.label}
@@ -71,7 +79,7 @@ export default function AppShell({ children, className = '', header = true, navT
       </aside>
 
       <div className="app-content">{children}</div>
-      <PrototypeBottomNav tone={navTone} />
+      {area === 'patient' && <PrototypeBottomNav tone={navTone} />}
     </main>
   )
 }

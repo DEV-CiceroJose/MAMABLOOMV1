@@ -10,6 +10,7 @@ function mapUser(row) {
     cpf: row.cpf,
     birthDate: row.birth_date instanceof Date ? row.birth_date.toISOString().slice(0, 10) : row.birth_date,
     passwordHash: row.password_hash,
+    avatarImage: row.avatar_image || '',
     pregnancy: row.pregnancy,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
   }
@@ -36,6 +37,21 @@ function clone(value) {
 }
 
 export class JsonFileRepository {
+  async listUsers() {
+    return this.#read((data) => data.users.map(({ id, name, avatarImage }) => ({ id, name, avatarImage: avatarImage || '' })))
+  }
+
+  async readCommunity() {
+    return this.#read((data) => data.community || {})
+  }
+
+  async mutateCommunity(operation) {
+    return this.#mutate((data) => {
+      data.community ||= {}
+      return operation(data.community)
+    })
+  }
+
   constructor(filePath) {
     if (!filePath) throw new Error('O caminho do arquivo JSON é obrigatório.')
     this.filePath = filePath
@@ -89,8 +105,8 @@ export class JsonFileRepository {
     const queuedWrite = this.writeQueue.catch(() => {}).then(async () => {
       await this.#ensureInitialized()
       const previousData = clone(this.data)
-      result = operation(this.data)
       try {
+        result = operation(this.data)
         await this.#persist()
       } catch (error) {
         this.data = previousData
@@ -149,6 +165,7 @@ export class JsonFileRepository {
       user.name = profile.name
       user.email = profile.email
       user.birthDate = profile.birthDate
+      if (profile.avatarImage !== undefined) user.avatarImage = profile.avatarImage
       if (profile.pregnancy !== undefined) user.pregnancy = profile.pregnancy
       user.updatedAt = new Date().toISOString()
       return user
@@ -169,6 +186,32 @@ export class JsonFileRepository {
 }
 
 export class PostgresRepository {
+  async listUsers() {
+    const { rows } = await this.pool.query('SELECT id, name, avatar_image AS "avatarImage" FROM users')
+    return rows
+  }
+
+  async readCommunity() {
+    const { rows } = await this.pool.query('SELECT value FROM community_state WHERE id = 1')
+    return rows[0]?.value || {}
+  }
+
+  async mutateCommunity(operation) {
+    const client = await this.pool.connect()
+    try {
+      await client.query('BEGIN')
+      const { rows } = await client.query('SELECT value FROM community_state WHERE id = 1 FOR UPDATE')
+      const state = rows[0]?.value || {}
+      const result = operation(state)
+      await client.query('UPDATE community_state SET value = $1::jsonb WHERE id = 1', [JSON.stringify(state)])
+      await client.query('COMMIT')
+      return result
+    } catch (error) {
+      await client.query('ROLLBACK')
+      throw error
+    } finally { client.release() }
+  }
+
   constructor(pool) {
     this.pool = pool
   }
@@ -198,8 +241,12 @@ export class PostgresRepository {
 
   async updateProfile(userId, profile) {
     const values = [userId, profile.name, profile.email, profile.birthDate]
-    const pregnancyUpdate = profile.pregnancy === undefined ? '' : ', pregnancy = $5::jsonb'
+    let pregnancyUpdate = profile.pregnancy === undefined ? '' : ', pregnancy = $5::jsonb'
     if (profile.pregnancy !== undefined) values.push(JSON.stringify(profile.pregnancy))
+    if (profile.avatarImage !== undefined) {
+      values.push(profile.avatarImage)
+      pregnancyUpdate += `, avatar_image = $${values.length}`
+    }
     const { rows } = await this.pool.query(
       `UPDATE users SET name = $2, email = $3, birth_date = $4, updated_at = NOW()${pregnancyUpdate}
        WHERE id = $1 RETURNING *`,
