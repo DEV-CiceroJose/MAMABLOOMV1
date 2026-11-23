@@ -1,6 +1,6 @@
 # MamaBloom: plano de rodadas e validação
 
-Data: 17/11/2026.
+Data inicial: 17/11/2026. Atualizado em 23/11/2026.
 Status: rodada 0 concluída (levantamento e organização); implementação funcional pendente.
 Branch: `codex/mamabloom-rodadas-validacao`.
 Base: `main`, commit `e69cdf2bb765364e4f5ad639ee73e1de186049e1`.
@@ -84,6 +84,7 @@ Antes desta rodada, confirmar se a amizade será imediata ou por solicitação/a
 Escopo:
 - Remover o bloco Recursos de acolhimento, incluindo seu exercício e cartões atuais.
 - Colocar artigos nesse espaço e criar uma página de leitura para cada artigo.
+- Destacar também os artigos na página principal, vinculados à leitura diária, conforme reforçado em 23/11/2026.
 - Conectar o cartão Faça a leitura do dia da home ao mesmo catálogo.
 - Usar identificadores estáveis para que home e apoio abram o mesmo conteúdo.
 - Oferecer navegação de volta e tratar artigo inexistente.
@@ -96,6 +97,18 @@ Validação: cada cartão abre o artigo correto; leitura diária usa o catálogo
 Não misturar artigos com entradas privadas do diário.
 
 ## Rodada 5: psicologia e consultas online
+
+Detalhamento atualizado: [Fluxo de psicologia para validação](psicologia-fluxo-validacao.md).
+
+Requisitos adicionais confirmados em 23/11/2026:
+- Acessar a página por um botão no cartão de terapia da Central de Apoio remodelada. O print antigo é referência de localização, não de layout.
+- Escolher psicólogo por perfil com nome, foto, idade, formação e experiência.
+- Consultar a agenda específica do profissional e selecionar dia e horário disponíveis.
+- Ver um botão para entrar no Google Meet no dia da consulta, com link real e acesso autorizado.
+- Ter chat para enviar mensagens ao psicólogo e receber suas respostas.
+- Prever a conta do profissional para gerenciar disponibilidade e responder no chat.
+- Dividir em entregas 5A (entrada/perfis), 5B (reserva), 5C (chat bilateral) e 5D (Meet), cada uma revisável.
+
 
 Escopo:
 - Criar página acessível pelo cartão Agende uma sessão de terapia da Central de Apoio.
@@ -146,3 +159,11 @@ Antes da rodada, definir campos obrigatórios de empresa e a conta que receberá
 - Nenhuma mudança funcional feita nesta rodada.
 - Main e publicação de produção não foram alteradas.
 - Próxima entrega proposta: rodada 1 (planos).
+
+## Nova comparação com Render em 23/11/2026
+
+Workspace test-devs, já confirmado pelo usuário.
+Frontend e API seguem no commit e69cdf2bb765364e4f5ad639ee73e1de186049e1, com os mesmos deploys live registrados na comparação inicial.
+A branch de validação acrescenta apenas documentação até esta revisão.
+Não foi feito deploy, alteração da main ou comparação visual autenticada nesta rodada.
+O plano mantém planos, perfil/nome do bebê, amizades, artigos na home e no apoio, psicologia e administração de empresas. As novas informações detalham psicologia; não cancelam os demais pedidos.
