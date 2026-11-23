@@ -93,7 +93,21 @@ Para que a paciente possa interagir de verdade, o sistema também precisa de:
 - Inclusão/consulta do link do Meet, de acordo com a origem escolhida.
 - Autorização no servidor, sem conceder privilégios apenas porque alguém abriu uma rota do painel.
 
-O modo de cadastro está pendente de resposta do usuário: cadastro pelo psicólogo com aprovação administrativa ou cadastro feito pelo administrador.
+Decisão confirmada pelo usuário em 23/11/2026: cadastro pelo próprio psicólogo, com aprovação do administrador.
+
+Fluxo de cadastro e aprovação:
+1. O psicólogo cria sua conta e preenche o perfil profissional.
+2. O cadastro fica com status Pendente de aprovação, visível ao profissional no próprio painel.
+3. O administrador analisa o cadastro em uma aba de Psicólogos, separada da aprovação de empresas.
+4. Após aprovação, o perfil entra na lista de profissionais disponíveis para as mães, e seus horários podem ser oferecidos para agendamento.
+5. O profissional gerencia sua própria disponibilidade e acompanha as próprias consultas e conversas.
+
+Regras de acesso:
+- Cadastro pendente ou rejeitado não aparece para pacientes e não pode receber reservas.
+- O próprio psicólogo não pode aprovar o cadastro nem alterar o status de aprovação.
+- A decisão administrativa deve registrar o responsável e a data.
+- Se rejeitado, o profissional vê o status e a justificativa; a política de correção e reenvio será detalhada na implementação.
+- O backend deve validar o status de aprovação tanto na listagem pública quanto na reserva, além de conferir a identidade do profissional na gestão dos horários.
 A aprovação de psicólogos é uma decisão separada da aprovação de empresas já solicitada para o painel administrativo.
 
 ## Entregas pequenas para validação
