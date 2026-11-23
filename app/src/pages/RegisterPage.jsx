@@ -38,7 +38,7 @@ export default function RegisterPage({ professional = false }) {
 
     setSubmitting(true)
     try {
-      await register(form)
+      await register({ ...form, accountType: professional ? 'professional' : 'patient' })
       navigate(professional ? '/psicologia/profissional' : '/cadastro/gestacao')
     } catch (error) {
       setErrors({ ...(error.fields ?? {}), form: error.message })

@@ -27,7 +27,7 @@ async function fixture(t, storage = 'json') {
   const users = []
   for (let index = 0; index < 4; index++) {
     const client = request.agent(app)
-    const result = await client.post('/v1/auth/register').send({ name: `Pessoa Teste ${index}`, email: `person${index}@example.com`, cpf: `0000000000${index}`, birthDate: '1990-01-01', password: 'password123' })
+    const result = await client.post('/v1/auth/register').send({ name: `Pessoa Teste ${index}`, email: `person${index}@example.com`, cpf: `0000000000${index}`, birthDate: '1990-01-01', password: 'password123', accountType: index === 1 ? 'professional' : 'patient' })
     assert.equal(result.status, 201)
     clients.push(client); users.push(result.body.user)
   }
@@ -45,6 +45,23 @@ async function slot(f) {
   return result.body
 }
 
+test('cadastro profissional mantém psicóloga na sua área e separa a administração', async (t) => {
+  const f = await fixture(t)
+  const professional = request.agent(f.app)
+  const registered = await professional.post('/v1/auth/register').send({ name: 'Psicóloga Nova', email: 'nova@example.com', cpf: '00000000009', birthDate: '1990-01-01', password: 'password123', accountType: 'professional' })
+  assert.equal(registered.status, 201)
+  assert.equal((await professional.get('/v1/community/me')).body.role, 'professional')
+  assert.equal((await professional.get('/v1/community/professionals')).status, 403)
+  assert.equal((await professional.get('/v1/data/mamabloom%3Adiary')).status, 403)
+  assert.equal((await professional.put('/v1/auth/pregnancy').send({ babyName: 'Teste', weeks: 4, lastPeriod: '2026-10-01' })).status, 403)
+  assert.equal((await professional.put('/v1/community/professional').send(profile)).status, 200)
+  assert.equal((await f.patient.put('/v1/community/professional').send(profile)).status, 403)
+  assert.equal((await f.admin.get('/v1/community/me')).body.role, 'admin')
+  assert.equal((await f.admin.get('/v1/community/friends')).status, 403)
+  assert.equal((await f.admin.get('/v1/data/mamabloom%3Adiary')).status, 403)
+  assert.equal((await f.admin.get('/v1/community/admin')).status, 200)
+})
+
 for (const storage of ['json', 'postgres']) {
   test(`${storage}: aprovação restrita, agenda e chat bilateral com dados persistentes`, async (t) => {
     const f = await fixture(t, storage)
@@ -61,7 +78,7 @@ for (const storage of ['json', 'postgres']) {
     assert.equal(listed[0].birthDate, undefined)
     assert.equal(listed[0].education, profile.education)
     const available = await slot(f)
-    assert.equal((await f.pro.post('/v1/community/consultations').send({ slotId: available.id })).status, 422)
+    assert.equal((await f.pro.post('/v1/community/consultations').send({ slotId: available.id })).status, 403)
     const booking = await f.patient.post('/v1/community/consultations').send({ slotId: available.id })
     assert.equal(booking.status, 200)
     const id = booking.body.id
@@ -126,8 +143,8 @@ test('empresas ficam pendentes e só administradores podem analisá-las; amizade
   await f.patient.post(chat).send(message)
   await f.patient.post(chat).send(message)
   assert.equal((await f.outsider.get(`/v1/community/friends/${f.users[2].id}/messages`)).body.messages.length, 1)
-  assert.equal((await f.pro.get(`/v1/community/friends/${f.users[2].id}/messages`)).status, 404)
-  assert.equal((await f.pro.post(`/v1/community/friends/${f.users[2].id}/messages`).send({ text: 'Não autorizada', clientId: crypto.randomUUID() })).status, 404)
+  assert.equal((await f.pro.get(`/v1/community/friends/${f.users[2].id}/messages`)).status, 403)
+  assert.equal((await f.pro.post(`/v1/community/friends/${f.users[2].id}/messages`).send({ text: 'Não autorizada', clientId: crypto.randomUUID() })).status, 403)
 })
 
 test('foto e nome do bebê persistem sem alterar as credenciais da conta', async (t) => {

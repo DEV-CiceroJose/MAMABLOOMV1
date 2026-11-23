@@ -30,12 +30,35 @@ function participant(state, id, userId) {
   return item
 }
 
+export async function getAccountArea(repository, userId) {
+  const storedRole = (await repository.getRecord(userId, 'internal:role'))?.value
+  if (storedRole === 'admin') return 'admin'
+  if (storedRole === 'professional') return 'professional'
+  if (typeof repository.readCommunity !== 'function') return 'patient'
+  return (await repository.readCommunity()).professionals?.some((profile) => profile.userId === userId) ? 'professional' : 'patient'
+}
+
+function mayUseRoute(area, method, path, req) {
+  if (path === '/me') return true
+  if (path.startsWith('/admin')) return area === 'admin'
+  if (area === 'admin') return false
+  if (path === '/professional') return area === 'professional'
+  if (path === '/slots') return area === 'professional'
+  if (path === '/slots/:professionalId') return area === 'patient' || req.params.professionalId === req.user.id
+  if (path === '/consultations') return method === 'get' || area === 'patient'
+  if (path.startsWith('/consultations/')) return true
+  return area === 'patient'
+}
+
 export function registerCommunityRoutes(app, { repository, authenticate }) {
   const read = async () => stateOf(await repository.readCommunity())
   const mutate = (fn) => repository.mutateCommunity((state) => fn(stateOf(state)))
-  const role = async (id) => (await repository.getRecord(id, 'internal:role'))?.value || 'patient'
+  const role = async (id) => getAccountArea(repository, id)
   const route = (method, path, action) => app[method](`/v1/community${path}`, authenticate, async (req, res, next) => {
-    try { res.json(await action(req)) } catch (error) {
+    try {
+      if (!mayUseRoute(await role(req.user.id), method, path, req)) fail(403, 'Esta área não está disponível para sua conta.')
+      res.json(await action(req))
+    } catch (error) {
       if (error.status) return res.status(error.status).json({ error: { code: 'COMMUNITY_ERROR', message: error.message } })
       return next(error)
     }

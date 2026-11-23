@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import FeaturePage, { Avatar, Feedback } from '../components/FeaturePage.jsx'
 import { useCommunity } from '../hooks/useCommunity.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { communityApi } from '../lib/api.js'
 import { saoPauloDay, statusLabel } from '../lib/psychology.js'
 import PrivateChat from '../components/PrivateChat.jsx'
+import ProfileEditor from '../components/ProfileEditor.jsx'
 
 const dateLabel = (value) => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).format(new Date(value))
 const timeLabel = (value) => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', timeStyle: 'short' }).format(new Date(value))
@@ -15,7 +15,7 @@ export default function PsychologyPage() {
   const [selected, setSelected] = useState(null)
   const [status, setStatus] = useState('')
   return <FeaturePage title="Encontre seu psicólogo" intro="Escolha alguém para acompanhar sua jornada, no seu tempo.">
-    <div className="community-actions"><Link to="/psicologia/profissional">Sou psicólogo · Meu painel</Link><a href="#minhas-consultas">Minhas consultas</a></div>
+    <div className="community-actions"><a className="button button--outline community-jump" href="#minhas-consultas">Ver minhas consultas ↓</a></div>
     <Feedback error={professionals.error} status={status} />
     {!professionals.data && !professionals.error && <p role="status">Buscando profissionais…</p>}
     {professionals.data?.professionals.length === 0 && <p className="community-card">Ainda não há psicólogos aprovados. Novos profissionais aparecerão aqui após a aprovação.</p>}
@@ -90,6 +90,7 @@ export function ProfessionalPage() {
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
   const [busy, setBusy] = useState(false)
+  const [editingAccount, setEditingAccount] = useState(false)
   useEffect(() => { if (own.data?.professional) setForm(({ birthDate, education, experience, registration, specialties, bio }) => Object.fromEntries(Object.entries({ birthDate, education, experience, registration, specialties, bio }).map(([key, value]) => [key, own.data.professional[key] ?? value]))) }, [own.data])
   async function save(event) {
     event.preventDefault(); setBusy(true); setError(''); setStatus('')
@@ -103,8 +104,8 @@ export function ProfessionalPage() {
       setStatus('Horário publicado.'); await slots.refresh()
     } catch (err) { setError(err.message) } finally { setBusy(false) }
   }
-  return <FeaturePage title="Meu painel profissional" intro="Cadastre seu perfil e acompanhe seus atendimentos."><Feedback error={error || own.error} status={status} />
-    <div className="community-card"><h2>{user.name}</h2><p>Seu nome e sua foto são os do <Link to="/perfil">seu perfil</Link>.</p><strong>{own.data?.professional ? statusLabel(own.data.professional.status) : 'Complete o cadastro profissional'}</strong>{own.data?.professional?.reason && <p>Justificativa: {own.data.professional.reason}</p>}</div>
+  return <FeaturePage backTo={null} title="Meu painel profissional" intro="Cadastre seu perfil e acompanhe seus atendimentos."><Feedback error={error || own.error} status={status} />
+    <div className="community-card"><h2>{user.name}</h2><p>Seus dados de conta identificam você nos atendimentos.</p><strong>{own.data?.professional ? statusLabel(own.data.professional.status) : 'Complete o cadastro profissional'}</strong>{own.data?.professional?.reason && <p>Justificativa: {own.data.professional.reason}</p>}<div className="community-actions"><button type="button" className="button button--outline" aria-expanded={editingAccount} onClick={() => setEditingAccount((value) => !value)}>Editar nome e foto</button></div>{editingAccount && <ProfileEditor showBabyName={false} onClose={() => setEditingAccount(false)} onSaved={() => setEditingAccount(false)} />}</div>
     <form className="community-card community-form" onSubmit={save}><h2>Perfil do psicólogo</h2><p>Após enviar ou alterar o perfil, ele passa pela aprovação do administrador.</p>
       {[['birthDate', 'Data de nascimento', 'date', 10], ['registration', 'Registro profissional (CRP)', 'text', 40], ['education', 'Formação', 'textarea', 800], ['experience', 'Experiência', 'textarea', 1200], ['specialties', 'Especialidades', 'text', 300], ['bio', 'Apresentação', 'textarea', 1200]].map(([key, label, type, max]) => <label key={key}>{label}{type === 'textarea' ? <textarea required maxLength={max} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} /> : <input required type={type} maxLength={max} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />}</label>)}<button className="button button--primary" disabled={busy} type="submit">Enviar para aprovação</button>
     </form>

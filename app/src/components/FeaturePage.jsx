@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import AppShell from './AppShell.jsx'
 import PrototypeToolbar from './prototype/PrototypeToolbar.jsx'
 
-export default function FeaturePage({ title, intro, children, tone = 'aqua' }) {
-  return <AppShell className={`community-page community-page--${tone}`} header={({ openMenu }) => <header className={`community-header community-header--${tone}`}><PrototypeToolbar onMenu={openMenu} /><Link to="/apoio">← Central de apoio</Link><h1>{title}</h1>{intro && <p>{intro}</p>}</header>}><div className="community-content">{children}</div></AppShell>
+export default function FeaturePage({ title, intro, children, tone = 'aqua', backTo = '/apoio' }) {
+  return <AppShell className={`community-page community-page--${tone}`} header={({ openMenu }) => <header className={`community-header community-header--${tone}`}><PrototypeToolbar onMenu={openMenu} showSettings={Boolean(backTo)} />{backTo && <Link className="community-back" to={backTo}><span aria-hidden="true">←</span> Central de apoio</Link>}<h1>{title}</h1>{intro && <p>{intro}</p>}</header>}><div className="community-content">{children}</div></AppShell>
 }
 
 export function Feedback({ error, status }) {

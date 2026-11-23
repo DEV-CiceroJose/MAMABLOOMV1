@@ -29,7 +29,8 @@ export default function LoginPage() {
     try {
       await login(identity.trim(), password)
       const access = await communityApi.get('/me').catch(() => null)
-      navigate(location.state?.from || (access?.role === 'admin' ? '/administracao' : access?.professional ? '/psicologia/profissional' : '/inicio'), { replace: true })
+      const destination = access?.role === 'admin' ? '/administracao' : access?.role === 'professional' || access?.professional ? '/psicologia/profissional' : '/inicio'
+      navigate(destination === '/inicio' ? location.state?.from || destination : destination, { replace: true })
     } catch (error) {
       setErrors({ form: error.message })
     } finally {

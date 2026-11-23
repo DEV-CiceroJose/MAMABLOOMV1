@@ -14,7 +14,7 @@ afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
 it('a legenda do bebê permite salvar o nome na conta e cancelar sem alteração', async () => {
   const updateProfile = vi.fn().mockResolvedValue({})
   open('/inicio', { updateProfile })
-  fireEvent.click(screen.getByRole('button', { name: 'Editar nome do bebê' }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Editar nome do bebê' }))
   fireEvent.change(screen.getByLabelText('Nome do bebê'), { target: { value: 'Aurora' } })
   fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
   expect(updateProfile).not.toHaveBeenCalled()
@@ -25,13 +25,14 @@ it('a legenda do bebê permite salvar o nome na conta e cancelar sem alteração
   expect(updateProfile).toHaveBeenCalledWith({ name: user.name, email: user.email, birthDate: user.birthDate, babyName: 'Aurora' })
 })
 
-it('a leitura diária abre o artigo compartilhado da home', () => {
+it('a leitura diária abre o artigo compartilhado da home', async () => {
   open('/inicio')
+  await screen.findByRole('heading', { name: 'Faça a leitura do dia!' })
   expect(screen.queryByRole('heading', { name: 'Artigos para você' })).not.toBeInTheDocument()
   const link = screen.getAllByRole('link').find((item) => item.classList.contains('home-prototype__reading'))
   expect(link).toHaveAttribute('href', `/artigos/${dailyArticle().id}`)
   fireEvent.click(link)
-  expect(screen.getByRole('heading', { level: 1, name: dailyArticle().title })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { level: 1, name: dailyArticle().title })).toBeInTheDocument()
   expect(screen.getByText(dailyArticle().conclusion)).toBeInTheDocument()
 })
 
@@ -57,11 +58,42 @@ it('escolhe o psicólogo, seleciona o dia e confirma um horário disponível', a
   expect(post).toHaveBeenCalledWith('/consultations', { slotId: 'slot' })
 })
 
-it('administração bloqueada não oferece botões de aprovação', async () => {
-  communityApi.get.mockImplementation(async (path) => { if (path === '/admin') throw new Error('Acesso exclusivo da administração.'); return { role: 'patient' } })
+it('administração bloqueada redireciona a paciente para sua área', async () => {
   open('/administracao')
-  expect(await screen.findByRole('alert')).toHaveTextContent('Acesso exclusivo da administração.')
+  expect(await screen.findByRole('heading', { name: 'LUNA' })).toBeInTheDocument()
   expect(screen.queryByRole('button', { name: 'Aprovar cadastro' })).not.toBeInTheDocument()
+})
+
+it('administração mostra apenas o painel e a opção de sair', async () => {
+  communityApi.get.mockImplementation(async (path) => path === '/me' ? { role: 'admin', professional: null } : { companies: [], professionals: [], reviews: [] })
+  open('/administracao')
+  expect(await screen.findByRole('heading', { name: 'Administração' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Central de apoio' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('navigation', { name: 'Navegação principal do aplicativo' })).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }))
+  expect(screen.getByRole('link', { name: 'Administração' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Agenda' })).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Sair da conta' })).toBeInTheDocument()
+})
+
+it('psicóloga volta ao próprio painel ao abrir uma área da paciente', async () => {
+  communityApi.get.mockImplementation(async (path) => path === '/me' ? { role: 'professional', professional: null } : path === '/consultations' ? { consultations: [] } : { slots: [] })
+  open('/inicio')
+  expect(await screen.findByRole('heading', { name: 'Meu painel profissional' })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'LUNA' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Central de apoio' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('navigation', { name: 'Navegação principal do aplicativo' })).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }))
+  expect(screen.getByRole('link', { name: 'Meu painel profissional' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Diário gestacional' })).not.toBeInTheDocument()
+})
+
+it('psicologia apresenta navegação contextual sem links profissionais soltos', async () => {
+  open('/psicologia')
+  expect(await screen.findByRole('heading', { name: 'Encontre seu psicólogo' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Central de apoio' })).toHaveClass('community-back')
+  expect(screen.getByRole('link', { name: /Ver minhas consultas/ })).toHaveClass('button')
+  expect(screen.queryByRole('link', { name: /Sou psicólogo/ })).not.toBeInTheDocument()
 })
 
 it('consulta na agenda aponta para o atendimento em vez de criar compromisso editável duplicado', async () => {

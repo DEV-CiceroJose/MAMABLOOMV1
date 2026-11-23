@@ -7,7 +7,7 @@ import { statusLabel } from '../lib/psychology.js'
 export default function AdminPage() {
   const { data, error, refresh } = useCommunity('/admin')
   const [tab, setTab] = useState('professionals')
-  return <FeaturePage tone="yellow" title="Administração" intro="Analise os cadastros de empresas e profissionais."><Feedback error={error} />
+  return <FeaturePage tone="yellow" backTo={null} title="Administração" intro="Analise os cadastros de empresas e profissionais."><Feedback error={error} />
     {data && <><div className="community-actions" aria-label="Tipo de cadastro"><button className="button button--outline" type="button" aria-pressed={tab === 'professionals'} onClick={() => setTab('professionals')}>Psicólogos</button><button className="button button--outline" type="button" aria-pressed={tab === 'companies'} onClick={() => setTab('companies')}>Empresas</button></div>
       {data[tab].length === 0 && <p>Nenhum cadastro recebido.</p>}{[...data[tab]].sort((a, b) => Number(b.status === 'pending') - Number(a.status === 'pending')).map((item) => <article className="community-card" key={item.id || item.userId}><p className="eyebrow">{statusLabel(item.status)}</p><h2>{item.name}</h2>{tab === 'professionals' ? <><p>{item.registration} · {item.specialties}</p><dl><dt>Formação</dt><dd>{item.education}</dd><dt>Experiência</dt><dd>{item.experience}</dd></dl><p>{item.bio}</p></> : <><p>CNPJ: {item.cnpj}</p><p>{item.email}</p><p>{item.description}</p></>}{item.reason && <p>Justificativa: {item.reason}</p>}{item.reviewedAt && <small>Analisado em {new Date(item.reviewedAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</small>}{item.status === 'pending' && <ReviewForm kind={tab} item={item} onSaved={refresh} />}</article>)}
     </>}

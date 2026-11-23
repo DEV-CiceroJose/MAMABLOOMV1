@@ -1,20 +1,22 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { afterEach, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App.jsx'
 import { AuthContext } from '../context/auth-context.js'
+import { communityApi } from '../lib/api.js'
 
 const user = { id: 'contact-test', name: 'Maria Silva', email: 'maria@example.com', birthDate: '2000-05-20', pregnancy: { weeks: 12 } }
 function renderRoute(route, extra = {}) {
   return render(<MemoryRouter initialEntries={[route]}><AuthContext.Provider value={{ user, logout: vi.fn(), ...extra }}><App /></AuthContext.Provider></MemoryRouter>)
 }
 afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
+beforeEach(() => { vi.spyOn(communityApi, 'get').mockImplementation(async (path) => path === '/friends' ? { friends: [], suggestions: [] } : { role: 'patient', professional: null }) })
 
-it('abre o cadastro de conhecidos pelos dois atalhos de apoio, sem alterar o cartão de emergência', () => {
+it('abre o cadastro de conhecidos pelos dois atalhos de apoio, sem alterar o cartão de emergência', async () => {
   const emergencyKey = 'mamabloom:user:contact-test:emergency-card'
   localStorage.setItem(emergencyKey, JSON.stringify({ contactName: 'Emergência', contactPhone: '85988887777' }))
   renderRoute('/apoio')
-  const addLinks = screen.getAllByRole('link', { name: /Adicionar apoio/ })
+  const addLinks = await screen.findAllByRole('link', { name: /Adicionar apoio/ })
   expect(addLinks).toHaveLength(2)
   expect(addLinks[0].getAttribute('href')).toBe(addLinks[1].getAttribute('href'))
   fireEvent.click(addLinks[1])
@@ -27,23 +29,23 @@ it('abre o cadastro de conhecidos pelos dois atalhos de apoio, sem alterar o car
   expect(JSON.parse(localStorage.getItem(emergencyKey))).toEqual({ contactName: 'Emergência', contactPhone: '85988887777' })
   cleanup()
   renderRoute('/apoio/contatos')
-  expect(screen.getByText('Ana Santos')).toBeInTheDocument()
+  expect(await screen.findByText('Ana Santos')).toBeInTheDocument()
 })
 
-it('recusa contato sem nome, telefone válido ou vínculo', () => {
+it('recusa contato sem nome, telefone válido ou vínculo', async () => {
   renderRoute('/apoio/contatos')
-  fireEvent.click(screen.getByRole('button', { name: 'Salvar contato' }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Salvar contato' }))
   expect(screen.getByText('Informe o nome do contato.')).toBeInTheDocument()
   expect(screen.getByText('Informe um telefone com DDD válido.')).toBeInTheDocument()
   expect(screen.getByText('Escolha o vínculo com essa pessoa.')).toBeInTheDocument()
   expect(localStorage.getItem('mamabloom:user:contact-test:trusted-contacts')).toBeNull()
 })
 
-it('edita e permite desfazer a remoção de um contato sem duplicar a lista', () => {
+it('edita e permite desfazer a remoção de um contato sem duplicar a lista', async () => {
   const storageKey = 'mamabloom:user:contact-test:trusted-contacts'
   localStorage.setItem(storageKey, JSON.stringify([{ id: 'ana', name: 'Ana', phone: '85999991234', relationship: 'Familiar' }]))
   renderRoute('/apoio/contatos')
-  fireEvent.click(screen.getByRole('button', { name: 'Editar Ana' }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Editar Ana' }))
   fireEvent.change(screen.getByLabelText('Vínculo'), { target: { value: 'Amigo(a)' } })
   fireEvent.click(screen.getByRole('button', { name: 'Salvar contato' }))
   expect(JSON.parse(localStorage.getItem(storageKey))).toEqual([{ id: 'ana', name: 'Ana', phone: '85999991234', relationship: 'Amigo(a)' }])
@@ -54,8 +56,9 @@ it('edita e permite desfazer a remoção de um contato sem duplicar a lista', ()
   expect(JSON.parse(localStorage.getItem(storageKey))).toHaveLength(1)
 })
 
-it('mantém gestação informativa e abre a edição dos dados pessoais no perfil', () => {
+it('mantém gestação informativa e abre a edição dos dados pessoais no perfil', async () => {
   renderRoute('/perfil')
+  await screen.findByRole('button', { name: 'Editar informações' })
   expect(screen.queryByRole('link', { name: /Gestação em acompanhamento/ })).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Editar informações' }))
   const form = screen.getByRole('form', { name: 'Editar informações' })
@@ -65,11 +68,11 @@ it('mantém gestação informativa e abre a edição dos dados pessoais no perfi
   expect(screen.queryByRole('form', { name: 'Editar informações' })).not.toBeInTheDocument()
 })
 
-it('encerra a opção de desfazer após salvar um substituto numa rede cheia', () => {
+it('encerra a opção de desfazer após salvar um substituto numa rede cheia', async () => {
   const storageKey = 'mamabloom:user:contact-test:trusted-contacts'
   localStorage.setItem(storageKey, JSON.stringify(Array.from({ length: 100 }, (_, index) => ({ id: String(index), name: `Pessoa ${index}`, phone: '85999991234', relationship: 'Familiar' }))))
   renderRoute('/apoio/contatos')
-  fireEvent.click(screen.getByRole('button', { name: 'Remover Pessoa 0', exact: true }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Remover Pessoa 0', exact: true }))
   fireEvent.change(screen.getByLabelText('Nome do contato'), { target: { value: 'Nova pessoa' } })
   fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '85999991234' } })
   fireEvent.change(screen.getByLabelText('Vínculo'), { target: { value: 'Amigo(a)' } })

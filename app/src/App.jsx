@@ -31,7 +31,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
       <Route path="/cadastro/psicologo" element={<RegisterPage professional />} />
-      <Route path="/cadastro/gestacao" element={<PregnancyStepPage />} />
+      <Route path="/cadastro/gestacao" element={<ProtectedRoute><PregnancyStepPage /></ProtectedRoute>} />
       <Route
         path="/inicio"
         element={
